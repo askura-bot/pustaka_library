@@ -1,0 +1,1783 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "vite.config.js",
+      "file_type": "code",
+      "source_file": "vite.config.js",
+      "source_location": "L1",
+      "id": "vite_config_js",
+      "community": 17,
+      "norm_label": "vite.config.js"
+    },
+    {
+      "label": "CreateNewUser.php",
+      "file_type": "code",
+      "source_file": "app/Actions/Fortify/CreateNewUser.php",
+      "source_location": "L1",
+      "id": "app_actions_fortify_createnewuser_php",
+      "community": 0,
+      "norm_label": "createnewuser.php"
+    },
+    {
+      "label": "CreateNewUser",
+      "file_type": "code",
+      "source_file": "app/Actions/Fortify/CreateNewUser.php",
+      "source_location": "L11",
+      "id": "fortify_createnewuser_createnewuser",
+      "community": 0,
+      "norm_label": "createnewuser"
+    },
+    {
+      "label": ".create()",
+      "file_type": "code",
+      "source_file": "app/Actions/Fortify/CreateNewUser.php",
+      "source_location": "L20",
+      "id": "fortify_createnewuser_createnewuser_create",
+      "community": 0,
+      "norm_label": ".create()"
+    },
+    {
+      "label": "ProfileValidationRules.php",
+      "file_type": "code",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L1",
+      "id": "app_concerns_profilevalidationrules_php",
+      "community": 6,
+      "norm_label": "profilevalidationrules.php"
+    },
+    {
+      "label": "profileRules()",
+      "file_type": "code",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L16",
+      "id": "concerns_profilevalidationrules_profilerules",
+      "community": 6,
+      "norm_label": "profilerules()"
+    },
+    {
+      "label": "nameRules()",
+      "file_type": "code",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L29",
+      "id": "concerns_profilevalidationrules_namerules",
+      "community": 6,
+      "norm_label": "namerules()"
+    },
+    {
+      "label": "emailRules()",
+      "file_type": "code",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L39",
+      "id": "concerns_profilevalidationrules_emailrules",
+      "community": 6,
+      "norm_label": "emailrules()"
+    },
+    {
+      "label": "Controller.php",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Controller.php",
+      "source_location": "L1",
+      "id": "app_http_controllers_controller_php",
+      "community": 14,
+      "norm_label": "controller.php"
+    },
+    {
+      "label": "Controller",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Controller.php",
+      "source_location": "L5",
+      "id": "controllers_controller_controller",
+      "community": 14,
+      "norm_label": "controller"
+    },
+    {
+      "label": "Logout.php",
+      "file_type": "code",
+      "source_file": "app/Livewire/Actions/Logout.php",
+      "source_location": "L1",
+      "id": "app_livewire_actions_logout_php",
+      "community": 8,
+      "norm_label": "logout.php"
+    },
+    {
+      "label": "Logout",
+      "file_type": "code",
+      "source_file": "app/Livewire/Actions/Logout.php",
+      "source_location": "L8",
+      "id": "actions_logout_logout",
+      "community": 8,
+      "norm_label": "logout"
+    },
+    {
+      "label": ".__invoke()",
+      "file_type": "code",
+      "source_file": "app/Livewire/Actions/Logout.php",
+      "source_location": "L13",
+      "id": "actions_logout_logout_invoke",
+      "community": 8,
+      "norm_label": ".__invoke()"
+    },
+    {
+      "label": "User.php",
+      "file_type": "code",
+      "source_file": "app/Models/User.php",
+      "source_location": "L1",
+      "id": "app_models_user_php",
+      "community": 0,
+      "norm_label": "user.php"
+    },
+    {
+      "label": "User",
+      "file_type": "code",
+      "source_file": "app/Models/User.php",
+      "source_location": "L15",
+      "id": "models_user_user",
+      "community": 0,
+      "norm_label": "user"
+    },
+    {
+      "label": ".casts()",
+      "file_type": "code",
+      "source_file": "app/Models/User.php",
+      "source_location": "L27",
+      "id": "models_user_user_casts",
+      "community": 0,
+      "norm_label": ".casts()"
+    },
+    {
+      "label": ".initials()",
+      "file_type": "code",
+      "source_file": "app/Models/User.php",
+      "source_location": "L38",
+      "id": "models_user_user_initials",
+      "community": 0,
+      "norm_label": ".initials()"
+    },
+    {
+      "label": "AppServiceProvider.php",
+      "file_type": "code",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L1",
+      "id": "app_providers_appserviceprovider_php",
+      "community": 4,
+      "norm_label": "appserviceprovider.php"
+    },
+    {
+      "label": "AppServiceProvider",
+      "file_type": "code",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L11",
+      "id": "providers_appserviceprovider_appserviceprovider",
+      "community": 4,
+      "norm_label": "appserviceprovider"
+    },
+    {
+      "label": ".register()",
+      "file_type": "code",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L16",
+      "id": "providers_appserviceprovider_appserviceprovider_register",
+      "community": 4,
+      "norm_label": ".register()"
+    },
+    {
+      "label": ".boot()",
+      "file_type": "code",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L24",
+      "id": "providers_appserviceprovider_appserviceprovider_boot",
+      "community": 4,
+      "norm_label": ".boot()"
+    },
+    {
+      "label": ".configureDefaults()",
+      "file_type": "code",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L32",
+      "id": "providers_appserviceprovider_appserviceprovider_configuredefaults",
+      "community": 4,
+      "norm_label": ".configuredefaults()"
+    },
+    {
+      "label": "FortifyServiceProvider.php",
+      "file_type": "code",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L1",
+      "id": "app_providers_fortifyserviceprovider_php",
+      "community": 2,
+      "norm_label": "fortifyserviceprovider.php"
+    },
+    {
+      "label": "FortifyServiceProvider",
+      "file_type": "code",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L14",
+      "id": "providers_fortifyserviceprovider_fortifyserviceprovider",
+      "community": 2,
+      "norm_label": "fortifyserviceprovider"
+    },
+    {
+      "label": ".register()",
+      "file_type": "code",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L19",
+      "id": "providers_fortifyserviceprovider_fortifyserviceprovider_register",
+      "community": 2,
+      "norm_label": ".register()"
+    },
+    {
+      "label": ".boot()",
+      "file_type": "code",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L27",
+      "id": "providers_fortifyserviceprovider_fortifyserviceprovider_boot",
+      "community": 2,
+      "norm_label": ".boot()"
+    },
+    {
+      "label": ".configureActions()",
+      "file_type": "code",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L37",
+      "id": "providers_fortifyserviceprovider_fortifyserviceprovider_configureactions",
+      "community": 2,
+      "norm_label": ".configureactions()"
+    },
+    {
+      "label": ".configureViews()",
+      "file_type": "code",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L46",
+      "id": "providers_fortifyserviceprovider_fortifyserviceprovider_configureviews",
+      "community": 2,
+      "norm_label": ".configureviews()"
+    },
+    {
+      "label": ".configureRateLimiting()",
+      "file_type": "code",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L60",
+      "id": "providers_fortifyserviceprovider_fortifyserviceprovider_configureratelimiting",
+      "community": 2,
+      "norm_label": ".configureratelimiting()"
+    },
+    {
+      "label": "app.php",
+      "file_type": "code",
+      "source_file": "bootstrap/app.php",
+      "source_location": "L1",
+      "id": "bootstrap_app_php",
+      "community": 18,
+      "norm_label": "app.php"
+    },
+    {
+      "label": "providers.php",
+      "file_type": "code",
+      "source_file": "bootstrap/providers.php",
+      "source_location": "L1",
+      "id": "bootstrap_providers_php",
+      "community": 19,
+      "norm_label": "providers.php"
+    },
+    {
+      "label": "packages.php",
+      "file_type": "code",
+      "source_file": "bootstrap/cache/packages.php",
+      "source_location": "L1",
+      "id": "bootstrap_cache_packages_php",
+      "community": 20,
+      "norm_label": "packages.php"
+    },
+    {
+      "label": "services.php",
+      "file_type": "code",
+      "source_file": "bootstrap/cache/services.php",
+      "source_location": "L1",
+      "id": "bootstrap_cache_services_php",
+      "community": 21,
+      "norm_label": "services.php"
+    },
+    {
+      "label": "app.php",
+      "file_type": "code",
+      "source_file": "config/app.php",
+      "source_location": "L1",
+      "id": "config_app_php",
+      "community": 22,
+      "norm_label": "app.php"
+    },
+    {
+      "label": "auth.php",
+      "file_type": "code",
+      "source_file": "config/auth.php",
+      "source_location": "L1",
+      "id": "config_auth_php",
+      "community": 23,
+      "norm_label": "auth.php"
+    },
+    {
+      "label": "cache.php",
+      "file_type": "code",
+      "source_file": "config/cache.php",
+      "source_location": "L1",
+      "id": "config_cache_php",
+      "community": 24,
+      "norm_label": "cache.php"
+    },
+    {
+      "label": "database.php",
+      "file_type": "code",
+      "source_file": "config/database.php",
+      "source_location": "L1",
+      "id": "config_database_php",
+      "community": 25,
+      "norm_label": "database.php"
+    },
+    {
+      "label": "filesystems.php",
+      "file_type": "code",
+      "source_file": "config/filesystems.php",
+      "source_location": "L1",
+      "id": "config_filesystems_php",
+      "community": 26,
+      "norm_label": "filesystems.php"
+    },
+    {
+      "label": "fortify.php",
+      "file_type": "code",
+      "source_file": "config/fortify.php",
+      "source_location": "L1",
+      "id": "config_fortify_php",
+      "community": 27,
+      "norm_label": "fortify.php"
+    },
+    {
+      "label": "logging.php",
+      "file_type": "code",
+      "source_file": "config/logging.php",
+      "source_location": "L1",
+      "id": "config_logging_php",
+      "community": 28,
+      "norm_label": "logging.php"
+    },
+    {
+      "label": "mail.php",
+      "file_type": "code",
+      "source_file": "config/mail.php",
+      "source_location": "L1",
+      "id": "config_mail_php",
+      "community": 29,
+      "norm_label": "mail.php"
+    },
+    {
+      "label": "queue.php",
+      "file_type": "code",
+      "source_file": "config/queue.php",
+      "source_location": "L1",
+      "id": "config_queue_php",
+      "community": 30,
+      "norm_label": "queue.php"
+    },
+    {
+      "label": "services.php",
+      "file_type": "code",
+      "source_file": "config/services.php",
+      "source_location": "L1",
+      "id": "config_services_php",
+      "community": 31,
+      "norm_label": "services.php"
+    },
+    {
+      "label": "session.php",
+      "file_type": "code",
+      "source_file": "config/session.php",
+      "source_location": "L1",
+      "id": "config_session_php",
+      "community": 32,
+      "norm_label": "session.php"
+    },
+    {
+      "label": "UserFactory.php",
+      "file_type": "code",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L1",
+      "id": "database_factories_userfactory_php",
+      "community": 5,
+      "norm_label": "userfactory.php"
+    },
+    {
+      "label": "UserFactory",
+      "file_type": "code",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L13",
+      "id": "factories_userfactory_userfactory",
+      "community": 5,
+      "norm_label": "userfactory"
+    },
+    {
+      "label": ".definition()",
+      "file_type": "code",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L25",
+      "id": "factories_userfactory_userfactory_definition",
+      "community": 5,
+      "norm_label": ".definition()"
+    },
+    {
+      "label": ".unverified()",
+      "file_type": "code",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L42",
+      "id": "factories_userfactory_userfactory_unverified",
+      "community": 5,
+      "norm_label": ".unverified()"
+    },
+    {
+      "label": ".withTwoFactor()",
+      "file_type": "code",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L52",
+      "id": "factories_userfactory_userfactory_withtwofactor",
+      "community": 5,
+      "norm_label": ".withtwofactor()"
+    },
+    {
+      "label": "0001_01_01_000000_create_users_table.php",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000000_create_users_table.php",
+      "source_location": "L1",
+      "id": "database_migrations_0001_01_01_000000_create_users_table_php",
+      "community": 9,
+      "norm_label": "0001_01_01_000000_create_users_table.php"
+    },
+    {
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000000_create_users_table.php",
+      "source_location": "L12",
+      "id": "migrations_0001_01_01_000000_create_users_table_up",
+      "community": 9,
+      "norm_label": "up()"
+    },
+    {
+      "label": "down()",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000000_create_users_table.php",
+      "source_location": "L43",
+      "id": "migrations_0001_01_01_000000_create_users_table_down",
+      "community": 9,
+      "norm_label": "down()"
+    },
+    {
+      "label": "0001_01_01_000001_create_cache_table.php",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000001_create_cache_table.php",
+      "source_location": "L1",
+      "id": "database_migrations_0001_01_01_000001_create_cache_table_php",
+      "community": 10,
+      "norm_label": "0001_01_01_000001_create_cache_table.php"
+    },
+    {
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000001_create_cache_table.php",
+      "source_location": "L12",
+      "id": "migrations_0001_01_01_000001_create_cache_table_up",
+      "community": 10,
+      "norm_label": "up()"
+    },
+    {
+      "label": "down()",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000001_create_cache_table.php",
+      "source_location": "L30",
+      "id": "migrations_0001_01_01_000001_create_cache_table_down",
+      "community": 10,
+      "norm_label": "down()"
+    },
+    {
+      "label": "0001_01_01_000002_create_jobs_table.php",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000002_create_jobs_table.php",
+      "source_location": "L1",
+      "id": "database_migrations_0001_01_01_000002_create_jobs_table_php",
+      "community": 11,
+      "norm_label": "0001_01_01_000002_create_jobs_table.php"
+    },
+    {
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000002_create_jobs_table.php",
+      "source_location": "L12",
+      "id": "migrations_0001_01_01_000002_create_jobs_table_up",
+      "community": 11,
+      "norm_label": "up()"
+    },
+    {
+      "label": "down()",
+      "file_type": "code",
+      "source_file": "database/migrations/0001_01_01_000002_create_jobs_table.php",
+      "source_location": "L51",
+      "id": "migrations_0001_01_01_000002_create_jobs_table_down",
+      "community": 11,
+      "norm_label": "down()"
+    },
+    {
+      "label": "2025_08_14_170933_add_two_factor_columns_to_users_table.php",
+      "file_type": "code",
+      "source_file": "database/migrations/2025_08_14_170933_add_two_factor_columns_to_users_table.php",
+      "source_location": "L1",
+      "id": "database_migrations_2025_08_14_170933_add_two_factor_columns_to_users_table_php",
+      "community": 12,
+      "norm_label": "2025_08_14_170933_add_two_factor_columns_to_users_table.php"
+    },
+    {
+      "label": "up()",
+      "file_type": "code",
+      "source_file": "database/migrations/2025_08_14_170933_add_two_factor_columns_to_users_table.php",
+      "source_location": "L12",
+      "id": "migrations_2025_08_14_170933_add_two_factor_columns_to_users_table_up",
+      "community": 12,
+      "norm_label": "up()"
+    },
+    {
+      "label": "down()",
+      "file_type": "code",
+      "source_file": "database/migrations/2025_08_14_170933_add_two_factor_columns_to_users_table.php",
+      "source_location": "L24",
+      "id": "migrations_2025_08_14_170933_add_two_factor_columns_to_users_table_down",
+      "community": 12,
+      "norm_label": "down()"
+    },
+    {
+      "label": "DatabaseSeeder.php",
+      "file_type": "code",
+      "source_file": "database/seeders/DatabaseSeeder.php",
+      "source_location": "L1",
+      "id": "database_seeders_databaseseeder_php",
+      "community": 0,
+      "norm_label": "databaseseeder.php"
+    },
+    {
+      "label": "DatabaseSeeder",
+      "file_type": "code",
+      "source_file": "database/seeders/DatabaseSeeder.php",
+      "source_location": "L9",
+      "id": "seeders_databaseseeder_databaseseeder",
+      "community": 0,
+      "norm_label": "databaseseeder"
+    },
+    {
+      "label": ".run()",
+      "file_type": "code",
+      "source_file": "database/seeders/DatabaseSeeder.php",
+      "source_location": "L14",
+      "id": "seeders_databaseseeder_databaseseeder_run",
+      "community": 0,
+      "norm_label": ".run()"
+    },
+    {
+      "label": "index.php",
+      "file_type": "code",
+      "source_file": "public/index.php",
+      "source_location": "L1",
+      "id": "public_index_php",
+      "community": 33,
+      "norm_label": "index.php"
+    },
+    {
+      "label": "app.js",
+      "file_type": "code",
+      "source_file": "resources/js/app.js",
+      "source_location": "L1",
+      "id": "resources_js_app_js",
+      "community": 34,
+      "norm_label": "app.js"
+    },
+    {
+      "label": "dashboard.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/dashboard.blade.php",
+      "source_location": null,
+      "id": "resources_views_dashboard_blade_php",
+      "community": 35,
+      "norm_label": "dashboard.blade.php"
+    },
+    {
+      "label": "welcome.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/welcome.blade.php",
+      "source_location": null,
+      "id": "resources_views_welcome_blade_php",
+      "community": 36,
+      "norm_label": "welcome.blade.php"
+    },
+    {
+      "label": "app-logo-icon.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/components/app-logo-icon.blade.php",
+      "source_location": null,
+      "id": "resources_views_components_app_logo_icon_blade_php",
+      "community": 37,
+      "norm_label": "app-logo-icon.blade.php"
+    },
+    {
+      "label": "app-logo.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/components/app-logo.blade.php",
+      "source_location": null,
+      "id": "resources_views_components_app_logo_blade_php",
+      "community": 38,
+      "norm_label": "app-logo.blade.php"
+    },
+    {
+      "label": "auth-header.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/components/auth-header.blade.php",
+      "source_location": null,
+      "id": "resources_views_components_auth_header_blade_php",
+      "community": 39,
+      "norm_label": "auth-header.blade.php"
+    },
+    {
+      "label": "auth-session-status.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/components/auth-session-status.blade.php",
+      "source_location": null,
+      "id": "resources_views_components_auth_session_status_blade_php",
+      "community": 40,
+      "norm_label": "auth-session-status.blade.php"
+    },
+    {
+      "label": "desktop-user-menu.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/components/desktop-user-menu.blade.php",
+      "source_location": null,
+      "id": "resources_views_components_desktop_user_menu_blade_php",
+      "community": 41,
+      "norm_label": "desktop-user-menu.blade.php"
+    },
+    {
+      "label": "placeholder-pattern.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/components/placeholder-pattern.blade.php",
+      "source_location": null,
+      "id": "resources_views_components_placeholder_pattern_blade_php",
+      "community": 42,
+      "norm_label": "placeholder-pattern.blade.php"
+    },
+    {
+      "label": "book-open-text.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/flux/icon/book-open-text.blade.php",
+      "source_location": null,
+      "id": "resources_views_flux_icon_book_open_text_blade_php",
+      "community": 43,
+      "norm_label": "book-open-text.blade.php"
+    },
+    {
+      "label": "chevrons-up-down.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/flux/icon/chevrons-up-down.blade.php",
+      "source_location": null,
+      "id": "resources_views_flux_icon_chevrons_up_down_blade_php",
+      "community": 44,
+      "norm_label": "chevrons-up-down.blade.php"
+    },
+    {
+      "label": "folder-git-2.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/flux/icon/folder-git-2.blade.php",
+      "source_location": null,
+      "id": "resources_views_flux_icon_folder_git_2_blade_php",
+      "community": 45,
+      "norm_label": "folder-git-2.blade.php"
+    },
+    {
+      "label": "layout-grid.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/flux/icon/layout-grid.blade.php",
+      "source_location": null,
+      "id": "resources_views_flux_icon_layout_grid_blade_php",
+      "community": 46,
+      "norm_label": "layout-grid.blade.php"
+    },
+    {
+      "label": "group.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/flux/navlist/group.blade.php",
+      "source_location": null,
+      "id": "resources_views_flux_navlist_group_blade_php",
+      "community": 47,
+      "norm_label": "group.blade.php"
+    },
+    {
+      "label": "app.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/layouts/app.blade.php",
+      "source_location": null,
+      "id": "resources_views_layouts_app_blade_php",
+      "community": 48,
+      "norm_label": "app.blade.php"
+    },
+    {
+      "label": "auth.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/layouts/auth.blade.php",
+      "source_location": null,
+      "id": "resources_views_layouts_auth_blade_php",
+      "community": 49,
+      "norm_label": "auth.blade.php"
+    },
+    {
+      "label": "header.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/layouts/app/header.blade.php",
+      "source_location": null,
+      "id": "resources_views_layouts_app_header_blade_php",
+      "community": 3,
+      "norm_label": "header.blade.php"
+    },
+    {
+      "label": "partials.head",
+      "file_type": "code",
+      "source_file": "resources/views/layouts/auth/split.blade.php",
+      "source_location": null,
+      "id": "partials_head",
+      "community": 3,
+      "norm_label": "partials.head"
+    },
+    {
+      "label": "sidebar.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/layouts/app/sidebar.blade.php",
+      "source_location": null,
+      "id": "resources_views_layouts_app_sidebar_blade_php",
+      "community": 3,
+      "norm_label": "sidebar.blade.php"
+    },
+    {
+      "label": "card.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/layouts/auth/card.blade.php",
+      "source_location": null,
+      "id": "resources_views_layouts_auth_card_blade_php",
+      "community": 3,
+      "norm_label": "card.blade.php"
+    },
+    {
+      "label": "simple.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/layouts/auth/simple.blade.php",
+      "source_location": null,
+      "id": "resources_views_layouts_auth_simple_blade_php",
+      "community": 3,
+      "norm_label": "simple.blade.php"
+    },
+    {
+      "label": "split.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/layouts/auth/split.blade.php",
+      "source_location": null,
+      "id": "resources_views_layouts_auth_split_blade_php",
+      "community": 3,
+      "norm_label": "split.blade.php"
+    },
+    {
+      "label": "login.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/auth/login.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_auth_login_blade_php",
+      "community": 50,
+      "norm_label": "login.blade.php"
+    },
+    {
+      "label": "register.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/auth/register.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_auth_register_blade_php",
+      "community": 51,
+      "norm_label": "register.blade.php"
+    },
+    {
+      "label": "two-factor-challenge.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/auth/two-factor-challenge.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_auth_two_factor_challenge_blade_php",
+      "community": 52,
+      "norm_label": "two-factor-challenge.blade.php"
+    },
+    {
+      "label": "verify-email.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/auth/verify-email.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_auth_verify_email_blade_php",
+      "community": 53,
+      "norm_label": "verify-email.blade.php"
+    },
+    {
+      "label": "layout.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/layout.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_settings_layout_blade_php",
+      "community": 54,
+      "norm_label": "layout.blade.php"
+    },
+    {
+      "label": "\u26a1appearance.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1appearance.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_settings_appearance_blade_php",
+      "community": 1,
+      "norm_label": "\u26a1appearance.blade.php"
+    },
+    {
+      "label": "partials.settings-heading",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "id": "partials_settings_heading",
+      "community": 1,
+      "norm_label": "partials.settings-heading"
+    },
+    {
+      "label": "\u26a1delete-user-form.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1delete-user-form.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_settings_delete_user_form_blade_php",
+      "community": 1,
+      "norm_label": "\u26a1delete-user-form.blade.php"
+    },
+    {
+      "label": "pages",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "id": "pages",
+      "community": 1,
+      "norm_label": "pages"
+    },
+    {
+      "label": "\u26a1delete-user-modal.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1delete-user-modal.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_settings_delete_user_modal_blade_php",
+      "community": 55,
+      "norm_label": "\u26a1delete-user-modal.blade.php"
+    },
+    {
+      "label": "\u26a1profile.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1profile.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_settings_profile_blade_php",
+      "community": 1,
+      "norm_label": "\u26a1profile.blade.php"
+    },
+    {
+      "label": "\u26a1security.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_settings_security_blade_php",
+      "community": 1,
+      "norm_label": "\u26a1security.blade.php"
+    },
+    {
+      "label": "disable",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "id": "disable",
+      "community": 1,
+      "norm_label": "disable"
+    },
+    {
+      "label": "$dispatch(",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "id": "dispatch",
+      "community": 1,
+      "norm_label": "$dispatch("
+    },
+    {
+      "label": "\u26a1two-factor-setup-modal.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1two-factor-setup-modal.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_settings_two_factor_setup_modal_blade_php",
+      "community": 7,
+      "norm_label": "\u26a1two-factor-setup-modal.blade.php"
+    },
+    {
+      "label": "resetVerification",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1two-factor-setup-modal.blade.php",
+      "source_location": null,
+      "id": "resetverification",
+      "community": 7,
+      "norm_label": "resetverification"
+    },
+    {
+      "label": "confirmTwoFactor",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1two-factor-setup-modal.blade.php",
+      "source_location": null,
+      "id": "confirmtwofactor",
+      "community": 7,
+      "norm_label": "confirmtwofactor"
+    },
+    {
+      "label": "showVerificationIfNecessary",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/\u26a1two-factor-setup-modal.blade.php",
+      "source_location": null,
+      "id": "showverificationifnecessary",
+      "community": 7,
+      "norm_label": "showverificationifnecessary"
+    },
+    {
+      "label": "\u26a1recovery-codes.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/two-factor/\u26a1recovery-codes.blade.php",
+      "source_location": null,
+      "id": "resources_views_pages_settings_two_factor_recovery_codes_blade_php",
+      "community": 15,
+      "norm_label": "\u26a1recovery-codes.blade.php"
+    },
+    {
+      "label": "regenerateRecoveryCodes",
+      "file_type": "code",
+      "source_file": "resources/views/pages/settings/two-factor/\u26a1recovery-codes.blade.php",
+      "source_location": null,
+      "id": "regeneraterecoverycodes",
+      "community": 15,
+      "norm_label": "regeneraterecoverycodes"
+    },
+    {
+      "label": "head.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/partials/head.blade.php",
+      "source_location": null,
+      "id": "resources_views_partials_head_blade_php",
+      "community": 56,
+      "norm_label": "head.blade.php"
+    },
+    {
+      "label": "settings-heading.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/partials/settings-heading.blade.php",
+      "source_location": null,
+      "id": "resources_views_partials_settings_heading_blade_php",
+      "community": 57,
+      "norm_label": "settings-heading.blade.php"
+    },
+    {
+      "label": "console.php",
+      "file_type": "code",
+      "source_file": "routes/console.php",
+      "source_location": "L1",
+      "id": "routes_console_php",
+      "community": 58,
+      "norm_label": "console.php"
+    },
+    {
+      "label": "settings.php",
+      "file_type": "code",
+      "source_file": "routes/settings.php",
+      "source_location": "L1",
+      "id": "routes_settings_php",
+      "community": 59,
+      "norm_label": "settings.php"
+    },
+    {
+      "label": "web.php",
+      "file_type": "code",
+      "source_file": "routes/web.php",
+      "source_location": "L1",
+      "id": "routes_web_php",
+      "community": 60,
+      "norm_label": "web.php"
+    },
+    {
+      "label": "Pest.php",
+      "file_type": "code",
+      "source_file": "tests/Pest.php",
+      "source_location": "L1",
+      "id": "tests_pest_php",
+      "community": 16,
+      "norm_label": "pest.php"
+    },
+    {
+      "label": "something()",
+      "file_type": "code",
+      "source_file": "tests/Pest.php",
+      "source_location": "L47",
+      "id": "tests_pest_something",
+      "community": 16,
+      "norm_label": "something()"
+    },
+    {
+      "label": "TestCase.php",
+      "file_type": "code",
+      "source_file": "tests/TestCase.php",
+      "source_location": "L1",
+      "id": "tests_testcase_php",
+      "community": 13,
+      "norm_label": "testcase.php"
+    },
+    {
+      "label": "TestCase",
+      "file_type": "code",
+      "source_file": "tests/TestCase.php",
+      "source_location": "L8",
+      "id": "tests_testcase_testcase",
+      "community": 13,
+      "norm_label": "testcase"
+    },
+    {
+      "label": ".skipUnlessFortifyHas()",
+      "file_type": "code",
+      "source_file": "tests/TestCase.php",
+      "source_location": "L10",
+      "id": "tests_testcase_testcase_skipunlessfortifyhas",
+      "community": 13,
+      "norm_label": ".skipunlessfortifyhas()"
+    },
+    {
+      "label": "DashboardTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/DashboardTest.php",
+      "source_location": "L1",
+      "id": "tests_feature_dashboardtest_php",
+      "community": 61,
+      "norm_label": "dashboardtest.php"
+    },
+    {
+      "label": "ExampleTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/ExampleTest.php",
+      "source_location": "L1",
+      "id": "tests_feature_exampletest_php",
+      "community": 62,
+      "norm_label": "exampletest.php"
+    },
+    {
+      "label": "AuthenticationTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/Auth/AuthenticationTest.php",
+      "source_location": "L1",
+      "id": "tests_feature_auth_authenticationtest_php",
+      "community": 63,
+      "norm_label": "authenticationtest.php"
+    },
+    {
+      "label": "EmailVerificationTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/Auth/EmailVerificationTest.php",
+      "source_location": "L1",
+      "id": "tests_feature_auth_emailverificationtest_php",
+      "community": 64,
+      "norm_label": "emailverificationtest.php"
+    },
+    {
+      "label": "RegistrationTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/Auth/RegistrationTest.php",
+      "source_location": "L1",
+      "id": "tests_feature_auth_registrationtest_php",
+      "community": 65,
+      "norm_label": "registrationtest.php"
+    },
+    {
+      "label": "TwoFactorChallengeTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/Auth/TwoFactorChallengeTest.php",
+      "source_location": "L1",
+      "id": "tests_feature_auth_twofactorchallengetest_php",
+      "community": 66,
+      "norm_label": "twofactorchallengetest.php"
+    },
+    {
+      "label": "ProfileUpdateTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/Settings/ProfileUpdateTest.php",
+      "source_location": "L1",
+      "id": "tests_feature_settings_profileupdatetest_php",
+      "community": 67,
+      "norm_label": "profileupdatetest.php"
+    },
+    {
+      "label": "SecurityTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/Settings/SecurityTest.php",
+      "source_location": "L1",
+      "id": "tests_feature_settings_securitytest_php",
+      "community": 68,
+      "norm_label": "securitytest.php"
+    },
+    {
+      "label": "ExampleTest.php",
+      "file_type": "code",
+      "source_file": "tests/Unit/ExampleTest.php",
+      "source_location": "L1",
+      "id": "tests_unit_exampletest_php",
+      "community": 69,
+      "norm_label": "exampletest.php"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Actions/Fortify/CreateNewUser.php",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "app_actions_fortify_createnewuser_php",
+      "target": "fortify_createnewuser_createnewuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Actions/Fortify/CreateNewUser.php",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "fortify_createnewuser_createnewuser",
+      "target": "fortify_createnewuser_createnewuser_create",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Actions/Fortify/CreateNewUser.php",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "fortify_createnewuser_createnewuser_create",
+      "target": "models_user_user"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "app_concerns_profilevalidationrules_php",
+      "target": "concerns_profilevalidationrules_profilerules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "app_concerns_profilevalidationrules_php",
+      "target": "concerns_profilevalidationrules_namerules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "app_concerns_profilevalidationrules_php",
+      "target": "concerns_profilevalidationrules_emailrules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "concerns_profilevalidationrules_profilerules",
+      "target": "concerns_profilevalidationrules_namerules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Concerns/ProfileValidationRules.php",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "concerns_profilevalidationrules_profilerules",
+      "target": "concerns_profilevalidationrules_emailrules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Controller.php",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "app_http_controllers_controller_php",
+      "target": "controllers_controller_controller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Livewire/Actions/Logout.php",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "app_livewire_actions_logout_php",
+      "target": "actions_logout_logout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Livewire/Actions/Logout.php",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "call",
+      "source": "actions_logout_logout_invoke",
+      "target": "actions_logout_logout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/User.php",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "app_models_user_php",
+      "target": "models_user_user",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/User.php",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "models_user_user",
+      "target": "models_user_user_casts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/User.php",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "models_user_user",
+      "target": "models_user_user_initials",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "database/seeders/DatabaseSeeder.php",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "seeders_databaseseeder_databaseseeder_run",
+      "target": "models_user_user"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "app_providers_appserviceprovider_php",
+      "target": "providers_appserviceprovider_appserviceprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "providers_appserviceprovider_appserviceprovider",
+      "target": "providers_appserviceprovider_appserviceprovider_register",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "providers_appserviceprovider_appserviceprovider",
+      "target": "providers_appserviceprovider_appserviceprovider_boot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "providers_appserviceprovider_appserviceprovider",
+      "target": "providers_appserviceprovider_appserviceprovider_configuredefaults",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/AppServiceProvider.php",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "providers_appserviceprovider_appserviceprovider_boot",
+      "target": "providers_appserviceprovider_appserviceprovider_configuredefaults",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "app_providers_fortifyserviceprovider_php",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "providers_fortifyserviceprovider_fortifyserviceprovider",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider_register",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "providers_fortifyserviceprovider_fortifyserviceprovider",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider_boot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "providers_fortifyserviceprovider_fortifyserviceprovider",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider_configureactions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "providers_fortifyserviceprovider_fortifyserviceprovider",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider_configureviews",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "providers_fortifyserviceprovider_fortifyserviceprovider",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider_configureratelimiting",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "providers_fortifyserviceprovider_fortifyserviceprovider_boot",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider_configureactions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "providers_fortifyserviceprovider_fortifyserviceprovider_boot",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider_configureviews",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Providers/FortifyServiceProvider.php",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "providers_fortifyserviceprovider_fortifyserviceprovider_boot",
+      "target": "providers_fortifyserviceprovider_fortifyserviceprovider_configureratelimiting",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "database_factories_userfactory_php",
+      "target": "factories_userfactory_userfactory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "factories_userfactory_userfactory",
+      "target": "factories_userfactory_userfactory_definition",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "factories_userfactory_userfactory",
+      "target": "factories_userfactory_userfactory_unverified",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "database/factories/UserFactory.php",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "factories_userfactory_userfactory",
+      "target": "factories_userfactory_userfactory_withtwofactor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/migrations/0001_01_01_000000_create_users_table.php",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "database_migrations_0001_01_01_000000_create_users_table_php",
+      "target": "migrations_0001_01_01_000000_create_users_table_up",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/migrations/0001_01_01_000000_create_users_table.php",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "database_migrations_0001_01_01_000000_create_users_table_php",
+      "target": "migrations_0001_01_01_000000_create_users_table_down",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/migrations/0001_01_01_000001_create_cache_table.php",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "database_migrations_0001_01_01_000001_create_cache_table_php",
+      "target": "migrations_0001_01_01_000001_create_cache_table_up",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/migrations/0001_01_01_000001_create_cache_table.php",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "database_migrations_0001_01_01_000001_create_cache_table_php",
+      "target": "migrations_0001_01_01_000001_create_cache_table_down",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/migrations/0001_01_01_000002_create_jobs_table.php",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "database_migrations_0001_01_01_000002_create_jobs_table_php",
+      "target": "migrations_0001_01_01_000002_create_jobs_table_up",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/migrations/0001_01_01_000002_create_jobs_table.php",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "database_migrations_0001_01_01_000002_create_jobs_table_php",
+      "target": "migrations_0001_01_01_000002_create_jobs_table_down",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/migrations/2025_08_14_170933_add_two_factor_columns_to_users_table.php",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "database_migrations_2025_08_14_170933_add_two_factor_columns_to_users_table_php",
+      "target": "migrations_2025_08_14_170933_add_two_factor_columns_to_users_table_up",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/migrations/2025_08_14_170933_add_two_factor_columns_to_users_table.php",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "database_migrations_2025_08_14_170933_add_two_factor_columns_to_users_table_php",
+      "target": "migrations_2025_08_14_170933_add_two_factor_columns_to_users_table_down",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/seeders/DatabaseSeeder.php",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "database_seeders_databaseseeder_php",
+      "target": "seeders_databaseseeder_databaseseeder",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "database/seeders/DatabaseSeeder.php",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "seeders_databaseseeder_databaseseeder",
+      "target": "seeders_databaseseeder_databaseseeder_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/layouts/app/header.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_layouts_app_header_blade_php",
+      "target": "partials_head"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/layouts/app/sidebar.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_layouts_app_sidebar_blade_php",
+      "target": "partials_head"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/layouts/auth/card.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_layouts_auth_card_blade_php",
+      "target": "partials_head"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/layouts/auth/simple.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_layouts_auth_simple_blade_php",
+      "target": "partials_head"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/layouts/auth/split.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_layouts_auth_split_blade_php",
+      "target": "partials_head"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1appearance.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_appearance_blade_php",
+      "target": "partials_settings_heading"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1profile.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_profile_blade_php",
+      "target": "partials_settings_heading"
+    },
+    {
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_security_blade_php",
+      "target": "partials_settings_heading"
+    },
+    {
+      "relation": "uses_component",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1delete-user-form.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_delete_user_form_blade_php",
+      "target": "pages"
+    },
+    {
+      "relation": "uses_component",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1profile.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_profile_blade_php",
+      "target": "pages"
+    },
+    {
+      "relation": "uses_component",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_security_blade_php",
+      "target": "pages"
+    },
+    {
+      "relation": "binds_method",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_security_blade_php",
+      "target": "disable"
+    },
+    {
+      "relation": "binds_method",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1security.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_security_blade_php",
+      "target": "dispatch"
+    },
+    {
+      "relation": "binds_method",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1two-factor-setup-modal.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_two_factor_setup_modal_blade_php",
+      "target": "resetverification"
+    },
+    {
+      "relation": "binds_method",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1two-factor-setup-modal.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_two_factor_setup_modal_blade_php",
+      "target": "confirmtwofactor"
+    },
+    {
+      "relation": "binds_method",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/\u26a1two-factor-setup-modal.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_two_factor_setup_modal_blade_php",
+      "target": "showverificationifnecessary"
+    },
+    {
+      "relation": "binds_method",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/pages/settings/two-factor/\u26a1recovery-codes.blade.php",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "resources_views_pages_settings_two_factor_recovery_codes_blade_php",
+      "target": "regeneraterecoverycodes"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Pest.php",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "tests_pest_php",
+      "target": "tests_pest_something",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/TestCase.php",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "tests_testcase_php",
+      "target": "tests_testcase_testcase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/TestCase.php",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "tests_testcase_testcase",
+      "target": "tests_testcase_testcase_skipunlessfortifyhas",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

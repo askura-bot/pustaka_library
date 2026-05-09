@@ -1,0 +1,24 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "php",
+            "args": [
+                "artisan",
+                "boost:mcp"
+            ]
+        },
+        "graphify": {
+            "command": "uv",
+            "args": [
+                "run",
+                "--with",
+                "graphifyy",
+                "--with",
+                "mcp",
+                "-m",
+                "graphify.serve",
+                "graphify-out/graph.json"
+            ]
+        }
+    }
+}
