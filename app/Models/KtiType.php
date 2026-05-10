@@ -20,4 +20,12 @@ class KtiType extends Model
             'columns' => 'array',
         ];
     }
+
+    /**
+     * Get the articles for the KTI type.
+     */
+    public function articles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Article::class);
+    }
 }
