@@ -6,6 +6,7 @@ Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/library/templates', \App\Livewire\KtiTypeManager::class)->name('library.templates');
 });
 
 use App\Http\Controllers\Auth\SocialAuthController;
