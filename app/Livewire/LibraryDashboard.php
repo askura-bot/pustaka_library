@@ -64,13 +64,16 @@ class LibraryDashboard extends Component
         );
 
         // Buat record di database
-        $user->articles()->create([
+        $article = $user->articles()->create([
             'kti_type_id' => $ktiType->id,
             'file_path' => $path,
             'file_name' => $originalName,
             'file_type' => strtolower($extension),
             'status' => 'pending',
         ]);
+
+        // Dispatch background job untuk dianalisis oleh AI
+        \App\Jobs\AnalyzeArticleJob::dispatch($article);
 
         // Reset state
         $this->reset(['file', 'selectedKtiTypeId']);

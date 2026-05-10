@@ -12,7 +12,7 @@
 
     <!-- Library Grid -->
     @if(count($articles) > 0)
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" wire:poll.5s>
             @foreach($articles as $index => $article)
                 @php
                     // Pilih warna background berdasarkan index tipe kti untuk variasi
@@ -22,38 +22,53 @@
                     // Format tanggal
                     $date = \Carbon\Carbon::parse($article->created_at)->translatedFormat('d M Y');
                 @endphp
-                <div class="neo-border neo-shadow p-5 flex flex-col gap-4 transform transition-transform hover:-translate-y-2 {{ $colorClass }} {{ str_contains($colorClass, 'bg-neo-purple') ? 'text-white' : 'text-black' }}">
-                    <div class="flex justify-between items-start gap-2">
-                        <!-- Icon PDF/DOCX -->
-                        <div class="bg-black text-white p-2 border-2 border-black">
-                            @if($article->file_type === 'pdf')
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-6-3v6"></path></svg>
+                <div class="neo-border neo-shadow flex flex-col transform transition-transform hover:-translate-y-2 {{ $colorClass }} {{ str_contains($colorClass, 'bg-neo-purple') ? 'text-white' : 'text-black' }}">
+                    
+                    <a href="{{ route('library.article', $article->id) }}" class="flex-grow p-5 flex flex-col gap-4">
+                        <div class="flex justify-between items-start gap-2">
+                            <!-- Icon PDF/DOCX -->
+                            <div class="bg-black text-white p-2 border-2 border-black">
+                                @if($article->file_type === 'pdf')
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-6-3v6"></path></svg>
+                                @else
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                @endif
+                            </div>
+                            <!-- Delete button (prevent default so it doesn't trigger link) -->
+                            <object>
+                                <button wire:click.prevent="confirmDelete({{ $article->id }})" class="bg-red-500 text-white border-2 border-black p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex-shrink-0 cursor-pointer relative z-10" title="Hapus">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </object>
+                        </div>
+
+                        <div class="mt-2 flex-grow">
+                            <h3 class="font-black text-lg line-clamp-2 leading-tight" title="{{ $article->file_name }}">
+                                {{ $article->file_name }}
+                            </h3>
+                            <p class="text-sm font-medium mt-1 opacity-80">{{ $date }}</p>
+                        </div>
+
+                        <div class="mt-auto">
+                            <span class="inline-block bg-black text-white text-xs font-bold px-2 py-1 uppercase tracking-wider neo-border">
+                                {{ $article->ktiType->name }}
+                            </span>
+                            
+                            @if(in_array($article->status, ['pending', 'processing']))
+                                <span class="inline-block bg-yellow-300 text-black text-xs font-bold px-2 py-1 uppercase tracking-wider neo-border ml-1 mt-2 animate-pulse">
+                                    AI Menganalisis...
+                                </span>
+                            @elseif($article->status === 'failed')
+                                <span class="inline-block bg-red-600 text-white text-xs font-bold px-2 py-1 uppercase tracking-wider neo-border ml-1 mt-2">
+                                    Gagal
+                                </span>
                             @else
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <span class="inline-block bg-green-500 text-white text-xs font-bold px-2 py-1 uppercase tracking-wider neo-border ml-1 mt-2">
+                                    Selesai
+                                </span>
                             @endif
                         </div>
-                        <button wire:click="confirmDelete({{ $article->id }})" class="bg-red-500 text-white border-2 border-black p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all flex-shrink-0" title="Hapus">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    </div>
-
-                    <div class="mt-2 flex-grow">
-                        <h3 class="font-black text-lg line-clamp-2 leading-tight" title="{{ $article->file_name }}">
-                            {{ $article->file_name }}
-                        </h3>
-                        <p class="text-sm font-medium mt-1 opacity-80">{{ $date }}</p>
-                    </div>
-
-                    <div class="mt-auto">
-                        <span class="inline-block bg-black text-white text-xs font-bold px-2 py-1 uppercase tracking-wider neo-border">
-                            {{ $article->ktiType->name }}
-                        </span>
-                        @if($article->status === 'pending')
-                            <span class="inline-block bg-yellow-300 text-black text-xs font-bold px-2 py-1 uppercase tracking-wider neo-border ml-1 mt-2">
-                                Menunggu Analisis
-                            </span>
-                        @endif
-                    </div>
+                    </a>
                 </div>
             @endforeach
         </div>

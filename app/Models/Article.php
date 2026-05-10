@@ -7,9 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'kti_type_id', 'file_path', 'file_name', 'file_type', 'status'])]
+#[Fillable(['user_id', 'kti_type_id', 'file_path', 'file_name', 'file_type', 'status', 'analysis_results'])]
 class Article extends Model
 {
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'analysis_results' => 'array',
+        ];
+    }
+
     /**
      * Get the user that owns the article.
      */
