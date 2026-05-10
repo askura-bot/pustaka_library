@@ -26,6 +26,14 @@
     --color-accent: var(--color-neutral-800);
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
+
+    /* Neubrutalism Colors */
+    --color-neo-yellow: #FDE047;
+    --color-neo-purple: #A855F7;
+    --color-neo-green: #4ADE80;
+
+    /* Neubrutalism Shadow */
+    --shadow-neo: 8px 8px 0px 0px rgba(0,0,0,1);
 }
 
 @layer theme {
@@ -64,3 +72,36 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+@layer utilities {
+    .neo-border {
+        @apply border-4 border-black rounded-none;
+    }
+    .neo-shadow {
+        @apply shadow-neo transition-all duration-200;
+    }
+    .neo-shadow:hover {
+        @apply translate-x-[2px] translate-y-[2px] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)];
+    }
+    .neo-shadow:active {
+        @apply translate-x-[8px] translate-y-[8px] shadow-none;
+    }
+    .neo-input {
+        @apply neo-border px-4 py-3 w-full focus:outline-hidden focus:ring-0 focus:shadow-neo transition-all duration-200 bg-white;
+    }
+    .neo-btn {
+        @apply neo-border neo-shadow font-bold px-6 py-3 uppercase tracking-wider inline-flex justify-center items-center gap-2 cursor-pointer;
+    }
+    .neo-btn-yellow {
+        @apply bg-neo-yellow text-black;
+    }
+    .neo-btn-purple {
+        @apply bg-neo-purple text-white;
+    }
+    .neo-btn-green {
+        @apply bg-neo-green text-black;
+    }
+    .neo-btn-white {
+        @apply bg-white text-black;
+    }
+}
