@@ -229,64 +229,6 @@
                         </h3>
                     </div>
 
-                    {{-- Quick Format (Local) --}}
-                    <div class="p-5 border-b-4 border-black">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-3">
-                            <label class="font-bold uppercase text-xs whitespace-nowrap">Quick Format:</label>
-                            <select wire:model.live="citationStyle" class="neo-input bg-white text-black font-bold grow text-sm">
-                                @foreach($citationStyles as $value => $label)
-                                    <option value="{{ $value }}">{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        @if($hasMissingMetadata)
-                            <div class="bg-neo-yellow/60 neo-border p-2 font-bold text-xs text-black flex gap-2 items-center mb-3">
-                                <span>⚠️</span>
-                                <span>Metadata tidak lengkap — placeholder perlu diisi manual.</span>
-                            </div>
-                        @endif
-
-                        <div class="flex border-4 border-black mb-3">
-                            <button type="button" x-on:click="activeTab = 'intext'"
-                                    :class="activeTab === 'intext' ? 'bg-neo-purple text-white' : 'bg-white text-black hover:bg-neo-yellow/40'"
-                                    class="flex-1 px-3 py-2 font-black uppercase text-xs border-r-4 border-black transition-colors">
-                                In-Text
-                            </button>
-                            <button type="button" x-on:click="activeTab = 'bibliography'"
-                                    :class="activeTab === 'bibliography' ? 'bg-neo-purple text-white' : 'bg-white text-black hover:bg-neo-yellow/40'"
-                                    class="flex-1 px-3 py-2 font-black uppercase text-xs transition-colors">
-                                Bibliography
-                            </button>
-                        </div>
-
-                        <div x-show="activeTab === 'intext'">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-xs uppercase text-zinc-500">Kutipan Singkat</span>
-                                <button type="button"
-                                    x-on:click="navigator.clipboard.writeText($refs.intextText.innerText); copiedIntext = true; setTimeout(() => copiedIntext = false, 2000);"
-                                    class="neo-btn neo-btn-green text-xs px-3 py-1 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                                    :class="copiedIntext ? 'translate-x-[3px] translate-y-[3px] shadow-none bg-black text-white' : ''">
-                                    <span x-show="!copiedIntext">📋</span><span x-show="copiedIntext" x-cloak>✓</span>
-                                </button>
-                            </div>
-                            <div class="bg-zinc-100 neo-border p-3 font-mono text-xs leading-relaxed" x-ref="intextText">{{ $inTextCitation }}</div>
-                        </div>
-
-                        <div x-show="activeTab === 'bibliography'" x-cloak>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-xs uppercase text-zinc-500">Daftar Pustaka</span>
-                                <button type="button"
-                                    x-on:click="navigator.clipboard.writeText($refs.bibText.innerText); copiedBib = true; setTimeout(() => copiedBib = false, 2000);"
-                                    class="neo-btn neo-btn-green text-xs px-3 py-1 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                                    :class="copiedBib ? 'translate-x-[3px] translate-y-[3px] shadow-none bg-black text-white' : ''">
-                                    <span x-show="!copiedBib">📋</span><span x-show="copiedBib" x-cloak>✓</span>
-                                </button>
-                            </div>
-                            <div class="bg-zinc-100 neo-border p-3 font-mono text-xs leading-relaxed" x-ref="bibText">{{ $bibliography }}</div>
-                        </div>
-                    </div>
-
                     {{-- AI-POWERED GENERATE REFERENCE --}}
                     <div class="p-5">
                         <h4 class="font-black uppercase text-xs mb-2 flex items-center gap-2">
