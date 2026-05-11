@@ -15,7 +15,7 @@ Fitur Upload (Basic): Implementasikan Drag & Drop upload, simpan file ke Private
 
 Fitur Hapus: Pastikan penghapusan file fisik dan database berjalan sinkron.
 
-Fase 4: Integrasi AI Gemini 3.1 Pro
+Fase 4: Integrasi AI Gemini 3 flash
 Gemini Service & Queue: Buat class GeminiService dan implementasikan Laravel Queues. Tambahkan logika Retry/Backoff untuk menangani Rate Limit Free Tier.
 
 Dynamic Extraction: Hubungkan proses upload dengan Gemini. Pastikan Gemini berhasil mengekstraksi data dalam Bahasa Indonesia sesuai kolom dari Template KTI yang dipilih.
@@ -32,4 +32,4 @@ Persistent Chat (Database): Buat sistem chat yang tersimpan di database PostgreS
 
 Semantic Search (pgvector): Implementasikan pencarian berdasarkan makna agar riset lebih canggih.
 
-Polishing & Deployment: Optimasi desain Neubrutalism di semua halaman, pasang Dark Mode, dan deploy ke Google Cloud Run.
+Polishing: Optimasi desain Neubrutalism di semua halaman, pasang Dark Mode.
