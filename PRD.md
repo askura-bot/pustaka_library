@@ -7,7 +7,7 @@ Tentu, ini adalah **Product Requirements Document (PRD)** yang sangat lengkap, d
 ## **1. PENDAHULUAN & TUJUAN (OVERVIEW & GOALS)**
 
 * **Nama Proyek:** AI-Powered Research Command Center (Personal Research Library).
-* **Tujuan:** Membantu mahasiswa (khususnya Gen Z) mengelola, memahami, dan menganalisis tumpukan Karya Tulis Ilmiah (KTI) secara instan menggunakan kekuatan Gemini 3.1 Pro.
+* **Tujuan:** Membantu mahasiswa (khususnya Gen Z) mengelola, memahami, dan menganalisis tumpukan Karya Tulis Ilmiah (KTI) secara instan menggunakan kekuatan Gemini 3 flash.
 * **Masalah yang Diselesaikan:** *Information overload* saat riset, kesulitan memahami jurnal akademik yang kompleks, dan proses pembuatan sitasi/rangkuman yang memakan waktu.
 * **Target Market:** Mahasiswa Universitas (Gen Z).
 
@@ -18,7 +18,7 @@ Tentu, ini adalah **Product Requirements Document (PRD)** yang sangat lengkap, d
 * **Backend:** Laravel 13 (Latest).
 * **Frontend:** Tailwind CSS & Livewire (Reaktivitas tinggi tanpa reload).
 * **Database:** PostgreSQL (Wajib menggunakan ekstensi `pgvector` untuk pencarian semantik).
-* **AI Engine:** Gemini 3.1 Pro via API Key (Free Tier).
+* **AI Engine:** Gemini 3 flash via API Key (Free Tier).
 * **Autentikasi:** Laravel Socialite (Google Sign-In) & Standard Auth.
 * **Background Jobs:** Laravel Queues (Redis/Database) dengan *Exponential Backoff*.
 * **Storage:** Laravel Private Disk (S3/Local) untuk keamanan file PDF.
@@ -115,7 +115,7 @@ Tentu, ini adalah **Product Requirements Document (PRD)** yang sangat lengkap, d
 2. **Auth:** User masuk menggunakan akun Google.
 3. **Setup:** User membuat Jenis KTI (misal: "Review Jurnal") dan menentukan kolom analisisnya.
 4. **Ingest:** User upload PDF, memilih jenis "Review Jurnal".
-5. **Process:** Laravel Queue mengirim file ke Gemini 3.1 Pro. Jika terkena *Rate Limit*, sistem akan mencoba lagi otomatis (*Retry*).
+5. **Process:** Laravel Queue mengirim file ke Gemini 3 flash. Jika terkena *Rate Limit*, sistem akan mencoba lagi otomatis (*Retry*).
 6. **Analysis:** User masuk ke halaman detail, membaca dokumen asli di kiri, dan hasil bedah AI di kanan (Bahasa Indonesia).
 7. **Interaction:** User bertanya ke chatbot tentang isi dokumen, jawabannya tersimpan permanen.
 8. **Output:** User memilih format APA, klik copy sitasi untuk tugasnya.

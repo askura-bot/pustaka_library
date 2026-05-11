@@ -33,16 +33,25 @@
 
                         <div class="flex flex-col gap-3">
                             @foreach($columns as $index => $column)
+                                @php
+                                    $isProtected = in_array(trim($column), $protectedColumns, true);
+                                @endphp
                                 <div class="flex gap-2 items-center transition-all opacity-100 starting:opacity-0 motion-safe:starting:-translate-x-4" wire:key="column-{{ $index }}">
                                     <!-- We can cycle through neon colors based on index for the input wrapper or just input background -->
                                     @php
                                         $colors = ['bg-neo-yellow text-black placeholder-zinc-700', 'bg-neo-purple text-white placeholder-white/70', 'bg-neo-green text-black placeholder-zinc-700'];
                                         $colorClass = $colors[$index % count($colors)];
                                     @endphp
-                                    <input wire:model="columns.{{ $index }}" type="text" placeholder="Nama Kolom {{ $index + 1 }} (Cth: Metode)" class="neo-input flex-grow {{ $colorClass }}" />
-                                    <button type="button" wire:click="removeColumn({{ $index }})" class="bg-red-500 text-white neo-border p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex-shrink-0" title="Hapus Kolom">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    </button>
+                                    <input wire:model="columns.{{ $index }}" type="text" placeholder="Nama Kolom {{ $index + 1 }} (Cth: Metode)" class="neo-input flex-grow {{ $colorClass }}" @if($isProtected) readonly @endif />
+                                    @if($isProtected)
+                                        <div class="bg-zinc-300 text-zinc-500 neo-border p-3 flex-shrink-0 cursor-not-allowed" title="Kolom wajib, tidak bisa dihapus">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        </div>
+                                    @else
+                                        <button type="button" wire:click="removeColumn({{ $index }})" class="bg-red-500 text-white neo-border p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex-shrink-0" title="Hapus Kolom">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
+                                    @endif
                                 </div>
                                 @error('columns.'.$index) <span class="text-red-500 font-bold text-sm">{{ $message }}</span> @enderror
                             @endforeach
@@ -76,14 +85,25 @@
                                     <button wire:click="edit({{ $type->id }})" class="bg-neo-yellow text-black neo-border p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                     </button>
-                                    <button wire:click="delete({{ $type->id }})" wire:confirm="Yakin ingin menghapus template ini?" class="bg-red-500 text-white neo-border p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    </button>
+                                    @if($type->name !== 'Article')
+                                        <button wire:click="delete({{ $type->id }})" wire:confirm="Yakin ingin menghapus template ini?" class="bg-red-500 text-white neo-border p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    @else
+                                        <div class="bg-zinc-200 text-zinc-400 neo-border p-2 cursor-not-allowed" title="Template default tidak bisa dihapus">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="flex flex-wrap gap-2 mt-auto">
                                 @foreach($type->columns as $col)
-                                    <span class="bg-gray-100 border-2 border-black px-3 py-1 text-sm font-bold text-black">{{ $col }}</span>
+                                    @php
+                                        $isProtectedCol = $type->name === 'Article' && in_array($col, \App\Models\KtiType::ARTICLE_PROTECTED_COLUMNS, true);
+                                    @endphp
+                                    <span class="border-2 border-black px-3 py-1 text-sm font-bold text-black {{ $isProtectedCol ? 'bg-neo-yellow' : 'bg-gray-100' }}">
+                                        {{ $col }}{{ $isProtectedCol ? ' 🔒' : '' }}
+                                    </span>
                                 @endforeach
                             </div>
                             <div class="text-sm font-bold mt-2 text-zinc-500">

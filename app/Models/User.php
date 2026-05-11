@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -18,6 +19,30 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
+
+    /**
+     * The required columns for the default "Article" KTI template.
+     */
+    public const DEFAULT_ARTICLE_COLUMNS = [
+        'Judul',
+        'Penulis',
+        'Jurnal Publikasi',
+        'Seri Jurnal',
+        'Link DOI',
+    ];
+
+    /**
+     * Boot the model and register events.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            $user->ktiTypes()->create([
+                'name' => 'Article',
+                'columns' => self::DEFAULT_ARTICLE_COLUMNS,
+            ]);
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -47,7 +72,7 @@ class User extends Authenticatable
     /**
      * Get the KTI types for the user.
      */
-    public function ktiTypes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function ktiTypes(): HasMany
     {
         return $this->hasMany(KtiType::class);
     }
@@ -55,7 +80,7 @@ class User extends Authenticatable
     /**
      * Get the articles for the user.
      */
-    public function articles(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function articles(): HasMany
     {
         return $this->hasMany(Article::class);
     }

@@ -5,8 +5,8 @@ namespace App\Jobs;
 use App\Models\Article;
 use App\Services\GeminiService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +21,11 @@ class AnalyzeArticleJob implements ShouldQueue
      * Tentukan berapa kali job ini boleh mencoba lagi (retries)
      */
     public $tries = 3;
+
+    /**
+     * Timeout job dalam detik (sinkron dengan HTTP timeout Gemini).
+     */
+    public $timeout = 300;
 
     /**
      * Create a new job instance.
@@ -50,11 +55,11 @@ class AnalyzeArticleJob implements ShouldQueue
             $this->article->update(['status' => 'processing']);
 
             // Dapatkan mime type berdasarkan ekstensi
-            $mimeType = $this->article->file_type === 'pdf' 
-                ? 'application/pdf' 
+            $mimeType = $this->article->file_type === 'pdf'
+                ? 'application/pdf'
                 : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
-            $absolutePath = storage_path('app/private/' . $this->article->file_path);
+            $absolutePath = storage_path('app/private/'.$this->article->file_path);
 
             // 1. Upload File ke Gemini
             $fileUri = $geminiService->uploadFile($absolutePath, $mimeType);
@@ -64,17 +69,24 @@ class AnalyzeArticleJob implements ShouldQueue
 
             // 2. Lakukan Analisis
             $columns = $this->article->ktiType->columns ?? [];
-            $resultJson = $geminiService->analyzeDocument($fileUri, $mimeType, $columns);
+            $ktiTypeName = $this->article->ktiType->name ?? '';
+            $resultJson = $geminiService->analyzeDocument($fileUri, $mimeType, $columns, $ktiTypeName);
 
-            // 3. Simpan hasil dan set completed
+            // 3. Extract citation metadata (title, author, year) with fallback keys
+            $metadata = $this->extractCitationMetadata($resultJson ?? []);
+
+            // 4. Simpan hasil lengkap + kolom utama untuk sitasi
             $this->article->update([
                 'status' => 'completed',
-                'analysis_results' => $resultJson
+                'analysis_results' => $resultJson,
+                'title' => $metadata['title'],
+                'author' => $metadata['author'],
+                'year' => $metadata['year'],
             ]);
 
         } catch (\Exception $e) {
-            Log::error('AnalyzeArticleJob Error: ' . $e->getMessage());
-            
+            Log::error('AnalyzeArticleJob Error: '.$e->getMessage());
+
             // Re-throw exception agar masuk ke antrean retry atau ditangkap oleh failed()
             throw $e;
         } finally {
@@ -82,6 +94,48 @@ class AnalyzeArticleJob implements ShouldQueue
                 $geminiService->deleteFile($fileUri);
             }
         }
+    }
+
+    /**
+     * Extract title, author, year from analysis results using multiple fallback keys.
+     *
+     * @param  array<string, mixed>  $results
+     * @return array{title: ?string, author: ?string, year: ?string}
+     */
+    protected function extractCitationMetadata(array $results): array
+    {
+        return [
+            'title' => $this->pickFirst($results, ['title', 'Title', 'judul', 'Judul']),
+            'author' => $this->pickFirst($results, ['author', 'Author', 'penulis', 'Penulis', 'authors', 'Authors']),
+            'year' => $this->pickFirst($results, ['year', 'Year', 'tahun', 'Tahun', 'publication_year', 'Publication Year']),
+        ];
+    }
+
+    /**
+     * Pick the first non-empty scalar value from an array using a list of candidate keys.
+     *
+     * @param  array<string, mixed>  $data
+     * @param  array<int, string>  $keys
+     */
+    protected function pickFirst(array $data, array $keys): ?string
+    {
+        foreach ($keys as $key) {
+            if (! array_key_exists($key, $data)) {
+                continue;
+            }
+
+            $value = $data[$key];
+
+            if (is_array($value)) {
+                $value = implode(', ', array_filter($value, 'is_scalar'));
+            }
+
+            if (is_scalar($value) && trim((string) $value) !== '') {
+                return trim((string) $value);
+            }
+        }
+
+        return null;
     }
 
     /**

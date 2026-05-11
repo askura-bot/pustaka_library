@@ -1,16 +1,20 @@
 <?php
 
+use App\Http\Controllers\ArticleFileController;
+use App\Http\Controllers\Auth\SocialAuthController;
+use App\Livewire\ArticleDetail;
+use App\Livewire\KtiTypeManager;
+use App\Livewire\LibraryDashboard;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', \App\Livewire\LibraryDashboard::class)->name('dashboard');
-    Route::get('/library/templates', \App\Livewire\KtiTypeManager::class)->name('library.templates');
-    Route::get('/library/article/{article}', \App\Livewire\ArticleDetail::class)->name('library.article');
+    Route::livewire('dashboard', LibraryDashboard::class)->name('dashboard');
+    Route::livewire('/library/templates', KtiTypeManager::class)->name('library.templates');
+    Route::livewire('/library/article/{article}', ArticleDetail::class)->name('library.article');
+    Route::get('/library/article/{article}/file', [ArticleFileController::class, 'show'])->name('library.article.file');
 });
-
-use App\Http\Controllers\Auth\SocialAuthController;
 
 Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
