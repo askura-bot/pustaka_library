@@ -35,20 +35,19 @@
                             @foreach($columns as $index => $column)
                                 @php
                                     $isProtected = in_array(trim($column), $protectedColumns, true);
+                                    $colors = ['bg-neo-yellow! text-black!', 'bg-neo-purple! text-white!', 'bg-neo-green! text-black!'];
+                                    $colorClass = $isProtected
+                                        ? 'bg-zinc-100! text-black! font-bold'
+                                        : $colors[$index % count($colors)];
                                 @endphp
                                 <div class="flex gap-2 items-center transition-all opacity-100 starting:opacity-0 motion-safe:starting:-translate-x-4" wire:key="column-{{ $index }}">
-                                    <!-- We can cycle through neon colors based on index for the input wrapper or just input background -->
-                                    @php
-                                        $colors = ['bg-neo-yellow text-black placeholder-zinc-700', 'bg-neo-purple text-white placeholder-white/70', 'bg-neo-green text-black placeholder-zinc-700'];
-                                        $colorClass = $colors[$index % count($colors)];
-                                    @endphp
-                                    <input wire:model="columns.{{ $index }}" type="text" placeholder="Nama Kolom {{ $index + 1 }} (Cth: Metode)" class="neo-input flex-grow {{ $colorClass }}" @if($isProtected) readonly @endif />
+                                    <input wire:model="columns.{{ $index }}" type="text" placeholder="Nama Kolom {{ $index + 1 }} (Cth: Metode)" class="neo-input grow {{ $colorClass }}" @if($isProtected) readonly @endif />
                                     @if($isProtected)
-                                        <div class="bg-zinc-300 text-zinc-500 neo-border p-3 flex-shrink-0 cursor-not-allowed" title="Kolom wajib, tidak bisa dihapus">
+                                        <div class="bg-zinc-300 text-zinc-500 neo-border p-3 shrink-0 cursor-not-allowed" title="Kolom wajib, tidak bisa dihapus">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                         </div>
                                     @else
-                                        <button type="button" wire:click="removeColumn({{ $index }})" class="bg-red-500 text-white neo-border p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex-shrink-0" title="Hapus Kolom">
+                                        <button type="button" wire:click="removeColumn({{ $index }})" class="bg-red-500 text-white neo-border p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all shrink-0" title="Hapus Kolom">
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         </button>
                                     @endif
