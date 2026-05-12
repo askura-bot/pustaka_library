@@ -104,27 +104,27 @@
 
             @elseif($article->status === 'completed' && $article->analysis_results)
                 @php
-                    $results = $article->analysis_results;
+                    $results = $flatResults;
                 @endphp
 
-                {{-- 1. ABSTRAK --}}
+                {{-- BAGIAN 1: ABSTRAK --}}
                 @if(isset($results['abstract']))
                     <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
                         <h3 class="text-lg font-black uppercase mb-2 text-neo-purple flex items-center gap-2">
-                            <span class="bg-neo-purple text-white w-7 h-7 flex items-center justify-center neo-border text-xs">1</span>
+                            <span class="bg-neo-purple text-white w-7 h-7 flex items-center justify-center neo-border text-xs">📝</span>
                             Abstrak
                         </h3>
                         <p class="text-zinc-800 leading-relaxed font-medium text-sm">{{ $results['abstract'] }}</p>
                     </div>
                 @endif
 
-                {{-- 2-6. TABEL ANALISIS DINAMIS (5 kolom spesifik) --}}
+                {{-- BAGIAN 2: TABEL ANALISIS (The Core) --}}
                 @if(count($dynamicColumns) > 0 && collect($dynamicColumns)->filter()->isNotEmpty())
                     <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
                         <div class="bg-neo-yellow px-5 py-3 border-b-4 border-black">
                             <h3 class="text-lg font-black uppercase flex items-center gap-2">
                                 <span class="bg-black text-white w-7 h-7 flex items-center justify-center neo-border text-xs">📊</span>
-                                Hasil Ekstraksi ({{ count($dynamicColumns) }} Poin)
+                                Tabel Analisis
                             </h3>
                         </div>
                         <div class="overflow-x-auto">
@@ -138,7 +138,7 @@
                                 <tbody>
                                     @foreach($dynamicColumns as $columnName => $columnValue)
                                         <tr class="border-b-2 border-black/15 last:border-b-0 hover:bg-neo-yellow/5 transition-colors">
-                                            <td class="border-r-4 border-black px-4 py-3 font-bold uppercase text-xs bg-zinc-50">
+                                            <td class="border-r-4 border-black px-4 py-3 font-bold text-xs bg-zinc-50">
                                                 {{ $columnName }}
                                             </td>
                                             <td class="px-4 py-3 font-medium text-zinc-800 text-sm leading-relaxed">
@@ -162,38 +162,22 @@
                     </div>
                 @endif
 
-                {{-- 7. SO WHAT? --}}
-                @if(isset($results['so_what']))
-                    <div class="bg-neo-purple text-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
-                        <h3 class="text-lg font-black uppercase mb-2 flex items-center gap-2">
-                            <span class="bg-white text-black w-7 h-7 flex items-center justify-center neo-border text-xs">7</span>
-                            So What?
-                        </h3>
-                        <p class="leading-relaxed font-medium text-white/95 text-sm">{{ $results['so_what'] }}</p>
-                    </div>
-                @endif
-
-                {{-- 8. KESIMPULAN --}}
-                @if(isset($results['conclusion']))
-                    <div class="bg-neo-green text-black neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
-                        <h3 class="text-lg font-black uppercase mb-2 flex items-center gap-2">
-                            <span class="bg-black text-white w-7 h-7 flex items-center justify-center neo-border text-xs">8</span>
-                            Kesimpulan
-                        </h3>
-                        <p class="leading-relaxed font-medium text-sm">{{ $results['conclusion'] }}</p>
-                    </div>
-                @endif
-
-                {{-- KEYWORDS --}}
-                @if($article->keywords && count($article->keywords) > 0)
+                {{-- BAGIAN 3: KATA KUNCI (Keywords) --}}
+                @php
+                    $displayKeywords = $article->keywords ?? ($results['keywords'] ?? null);
+                @endphp
+                @if($displayKeywords && is_array($displayKeywords) && count($displayKeywords) > 0)
                     <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
                         <h3 class="text-lg font-black uppercase mb-3 flex items-center gap-2">
                             <span class="bg-neo-yellow text-black w-7 h-7 flex items-center justify-center neo-border text-xs">🏷️</span>
                             Kata Kunci
                         </h3>
                         <div class="flex flex-wrap gap-2">
-                            @foreach($article->keywords as $keyword)
-                                <span class="bg-neo-yellow text-black neo-border px-3 py-1 text-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            @foreach($displayKeywords as $i => $keyword)
+                                @php
+                                    $tagColors = ['bg-neo-green text-black', 'bg-neo-purple text-white', 'bg-neo-yellow text-black', 'bg-neo-green text-black', 'bg-neo-purple text-white'];
+                                @endphp
+                                <span class="{{ $tagColors[$i % count($tagColors)] }} neo-border px-3 py-1 text-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                     {{ $keyword }}
                                 </span>
                             @endforeach
@@ -201,37 +185,24 @@
                     </div>
                 @endif
 
-                {{-- EXTRA RESULTS (non-template, non-reserved) --}}
-                @php
-                    $templateCols = $article->ktiType->columns ?? [];
-                    $reservedKeys = array_merge($templateCols, ['abstract', 'so_what', 'conclusion', 'title', 'author', 'year']);
-                    $extraResults = collect($results)->except($reservedKeys)->filter();
-                @endphp
-
-                @if($extraResults->isNotEmpty())
-                    <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
-                        <h3 class="text-lg font-black uppercase mb-3 text-neo-purple flex items-center gap-2">
-                            <span class="bg-neo-green text-black w-7 h-7 flex items-center justify-center neo-border text-xs">💡</span>
-                            Temuan Tambahan
+                {{-- BAGIAN 4: INSIGHTS (So What? & Conclusion) --}}
+                @if(isset($results['so_what']))
+                    <div class="bg-neo-purple text-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
+                        <h3 class="text-lg font-black uppercase mb-2 flex items-center gap-2">
+                            <span class="bg-white text-black w-7 h-7 flex items-center justify-center neo-border text-xs">🤔</span>
+                            So What?
                         </h3>
-                        <div class="flex flex-col gap-3">
-                            @foreach($extraResults as $key => $value)
-                                <div class="bg-zinc-50 neo-border p-3">
-                                    <h4 class="font-bold uppercase text-xs text-zinc-600 mb-1">{{ str_replace('_', ' ', $key) }}</h4>
-                                    <div class="text-zinc-800 font-medium text-sm leading-relaxed">
-                                        @if(is_array($value))
-                                            <ul class="list-disc list-inside space-y-1">
-                                                @foreach($value as $item)
-                                                    <li>{{ is_array($item) ? json_encode($item, JSON_UNESCAPED_UNICODE) : $item }}</li>
-                                                @endforeach
-                                            </ul>
-                                        @else
-                                            {{ $value }}
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+                        <p class="leading-relaxed font-medium text-white/95 text-sm">{{ $results['so_what'] }}</p>
+                    </div>
+                @endif
+
+                @if(isset($results['conclusion']))
+                    <div class="bg-neo-green text-black neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
+                        <h3 class="text-lg font-black uppercase mb-2 flex items-center gap-2">
+                            <span class="bg-black text-white w-7 h-7 flex items-center justify-center neo-border text-xs">✅</span>
+                            Kesimpulan
+                        </h3>
+                        <p class="leading-relaxed font-medium text-sm">{{ $results['conclusion'] }}</p>
                     </div>
                 @endif
 

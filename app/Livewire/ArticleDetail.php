@@ -181,7 +181,9 @@ class ArticleDetail extends Component
     }
 
     /**
-     * Get dynamic analysis columns from KtiType template.
+     * Get dynamic analysis columns from KtiType template with case-insensitive key matching.
+     * Handles both flat JSON (new format) and nested JSON (legacy format with categories).
+     * Excludes reserved keys (abstract, so_what, conclusion, keywords) as they have dedicated sections.
      *
      * @return array<string, mixed>
      */
@@ -190,18 +192,91 @@ class ArticleDetail extends Component
         $results = $this->article->analysis_results ?? [];
         $templateColumns = $this->article->ktiType->columns ?? [];
 
+        // Reserved keys that have their own UI sections
+        $reservedKeys = ['abstract', 'so_what', 'conclusion', 'keywords', 'title', 'author', 'year'];
+
+        // Flatten nested legacy format into a single-level array
+        $flatResults = $this->flattenResults($results);
+
         $dynamicData = [];
         foreach ($templateColumns as $column) {
-            $dynamicData[$column] = $results[$column] ?? null;
+            // Skip reserved keys — they have dedicated display sections
+            if (in_array(mb_strtolower($column), $reservedKeys, true)) {
+                continue;
+            }
+
+            // Case-insensitive key lookup in flattened results
+            $value = $this->findValueCaseInsensitive($flatResults, $column);
+            $dynamicData[$column] = $value;
         }
 
         return $dynamicData;
     }
 
+    /**
+     * Flatten nested analysis results (legacy format) into a single-level array.
+     * Handles structures like: {"KOLOM_SPESIFIK_ARTIKEL": {"Judul": "...", "Penulis": "..."}}
+     *
+     * @param  array<string, mixed>  $results
+     * @return array<string, mixed>
+     */
+    protected function flattenResults(array $results): array
+    {
+        $flat = [];
+
+        foreach ($results as $key => $value) {
+            if (is_array($value) && ! array_is_list($value)) {
+                // This is a nested object (like METADATA, KOLOM_SPESIFIK_ARTIKEL, etc.)
+                // Merge its children into the flat array
+                foreach ($value as $childKey => $childValue) {
+                    $flat[$childKey] = $childValue;
+                }
+            } else {
+                // Already flat
+                $flat[$key] = $value;
+            }
+        }
+
+        return $flat;
+    }
+
+    /**
+     * Find a value in an array using case-insensitive key matching.
+     */
+    protected function findValueCaseInsensitive(array $data, string $key): mixed
+    {
+        // Exact match first
+        if (array_key_exists($key, $data)) {
+            return $data[$key];
+        }
+
+        // Case-insensitive match
+        $lowerKey = mb_strtolower($key);
+        foreach ($data as $k => $v) {
+            if (mb_strtolower($k) === $lowerKey) {
+                return $v;
+            }
+        }
+
+        // Try snake_case variant (e.g. "Jurnal Publikasi" matches "Jurnal_Publikasi")
+        $snakeKey = mb_strtolower(str_replace(' ', '_', $key));
+        foreach ($data as $k => $v) {
+            if (mb_strtolower(str_replace(' ', '_', $k)) === $snakeKey) {
+                return $v;
+            }
+        }
+
+        return null;
+    }
+
     public function render()
     {
+        // Flatten results for blade access (handles both legacy nested and new flat format)
+        $flatResults = $this->flattenResults($this->article->analysis_results ?? []);
+
         return view('livewire.article-detail', [
             'article' => $this->article,
+            'flatResults' => $flatResults,
             'inTextCitation' => $this->inTextCitation,
             'bibliography' => $this->bibliography,
             'hasMissingMetadata' => $this->hasMissingMetadata,

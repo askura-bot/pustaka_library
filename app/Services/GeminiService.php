@@ -11,16 +11,6 @@ class GeminiService
 
     protected string $baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
 
-    /**
-     * Universal mandatory keys that must always be extracted regardless of KTI type.
-     */
-    private const UNIVERSAL_KEYS = ['abstract', 'so_what', 'conclusion'];
-
-    /**
-     * Metadata keys always extracted for citation purposes.
-     */
-    private const METADATA_KEYS = ['title', 'author', 'year'];
-
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key');
@@ -106,6 +96,7 @@ class GeminiService
 
     /**
      * Build the extraction prompt based on KTI type.
+     * Returns a flat JSON structure without categories like METADATA/ANALISIS UMUM.
      *
      * @param  array<int, string>  $columns
      */
@@ -113,55 +104,33 @@ class GeminiService
     {
         $isArticle = strtolower(trim($ktiTypeName)) === 'article';
 
-        // Always required: metadata keys
-        $metadataDescription = implode(', ', array_map(
-            fn (string $key) => match ($key) {
-                'title' => "'title' (judul asli dokumen dalam bahasa aslinya)",
-                'author' => "'author' (nama lengkap semua penulis, dipisahkan koma)",
-                'year' => "'year' (tahun publikasi, hanya angka 4 digit)",
-                default => "'$key'",
-            },
-            self::METADATA_KEYS
-        ));
-
-        // Template-specific columns
-        $templateColumnsList = implode(', ', array_map(fn ($col) => "'$col'", $columns));
-
-        // Universal mandatory keys
-        $universalDescription = implode(', ', array_map(
-            fn (string $key) => match ($key) {
-                'abstract' => "'abstract' (ringkasan isi dokumen dalam Bahasa Indonesia, 2-4 kalimat)",
-                'so_what' => "'so_what' (esensi atau makna penting penelitian ini — mengapa ini relevan?)",
-                'conclusion' => "'conclusion' (kesimpulan utama dari dokumen dalam Bahasa Indonesia)",
-                default => "'$key'",
-            },
-            self::UNIVERSAL_KEYS
-        ));
-
-        // Keywords instruction (always required)
-        $keywordsInstruction = "'keywords' (array berisi tepat 5 kata kunci yang paling menggambarkan isi dokumen, campuran Bahasa Indonesia dan Inggris, contoh: [\"machine learning\", \"klasifikasi teks\", \"NLP\", \"deep learning\", \"analisis sentimen\"])";
+        // Convert template column names to lowercase snake_case keys for JSON
+        $columnKeys = array_map(fn ($col) => "'{$col}'", $columns);
+        $columnsList = implode(', ', $columnKeys);
 
         if ($isArticle) {
             return 'Analisis dokumen jurnal/artikel ilmiah terlampir. '.
-                   'Berikan output HANYA dalam format JSON valid. '.
-                   'Ekstrak informasi berikut: '.
-                   "METADATA: {$metadataDescription}. ".
-                   "KOLOM SPESIFIK ARTIKEL: {$templateColumnsList} (isi sesuai data yang ditemukan di dokumen). ".
-                   "ANALISIS UMUM: {$universalDescription}. ".
-                   "KATA KUNCI: {$keywordsInstruction}. ".
-                   'Catatan: Untuk kolom spesifik artikel, gunakan Bahasa Indonesia kecuali untuk judul, nama penulis, nama jurnal, dan DOI yang harus tetap dalam bahasa aslinya. '.
+                   'Berikan output HANYA dalam format JSON valid dengan kunci-kunci berikut: '.
+                   "{$columnsList}, ".
+                   "'abstract' (ringkasan isi dokumen dalam Bahasa Indonesia, 2-4 kalimat), ".
+                   "'so_what' (esensi atau makna penting penelitian ini — mengapa ini relevan?), ".
+                   "'conclusion' (kesimpulan utama dari dokumen dalam Bahasa Indonesia), ".
+                   "'keywords' (array berisi tepat 5 kata kunci campuran Bahasa Indonesia dan Inggris yang menggambarkan isi dokumen). ".
+                   'Aturan: Isi setiap kunci sesuai data yang ditemukan di dokumen. '.
+                   'Untuk judul, nama penulis, nama jurnal, dan DOI gunakan bahasa aslinya. Sisanya dalam Bahasa Indonesia. '.
                    'Jangan tambahkan awalan ```json atau akhiran apapun, berikan JSON mentah saja.';
         }
 
-        // Generic prompt for any other KTI type
+        // Generic prompt for custom KTI types
         return 'Analisis dokumen terlampir. '.
-               'Berikan output HANYA dalam format JSON valid menggunakan Bahasa Indonesia. '.
-               'Ekstrak informasi berikut: '.
-               "METADATA WAJIB: {$metadataDescription}. ".
-               "KOLOM TEMPLATE: {$templateColumnsList} (isi sesuai data yang ditemukan di dokumen). ".
-               "ANALISIS WAJIB: {$universalDescription}. ".
-               "KATA KUNCI: {$keywordsInstruction}. ".
-               'Catatan: Semua jawaban dalam Bahasa Indonesia kecuali judul asli, nama penulis, dan istilah teknis. '.
+               'Berikan output HANYA dalam format JSON valid dengan kunci-kunci berikut: '.
+               "{$columnsList}, ".
+               "'abstract' (ringkasan isi dokumen dalam Bahasa Indonesia, 2-4 kalimat), ".
+               "'so_what' (esensi atau makna penting penelitian ini — mengapa ini relevan?), ".
+               "'conclusion' (kesimpulan utama dari dokumen dalam Bahasa Indonesia), ".
+               "'keywords' (array berisi tepat 5 kata kunci campuran Bahasa Indonesia dan Inggris yang menggambarkan isi dokumen). ".
+               'Aturan: Isi setiap kunci sesuai data yang ditemukan di dokumen. '.
+               'Gunakan Bahasa Indonesia kecuali judul asli, nama penulis, dan istilah teknis. '.
                'Jangan tambahkan awalan ```json atau akhiran apapun, berikan JSON mentah saja.';
     }
 
