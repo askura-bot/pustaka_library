@@ -10,6 +10,34 @@
         </button>
     </div>
 
+    <!-- Smart Search Bar -->
+    <div class="mb-6">
+        <div class="relative">
+            <div class="flex gap-3 items-center">
+                <div class="relative grow">
+                    <input wire:model.live.debounce.300ms="search"
+                           type="text"
+                           placeholder="Cari judul, penulis, kata kunci, atau isi analisis..."
+                           class="neo-input bg-white text-black font-medium pl-12 pr-4" />
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                </div>
+                <a href="{{ route('library.ask-ai') }}" class="neo-btn neo-btn-green shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] whitespace-nowrap text-sm hidden md:inline-flex">
+                    🤖 Ask AI
+                </a>
+                <span class="bg-neo-purple text-white neo-border px-3 py-2 text-xs font-black uppercase tracking-wider whitespace-nowrap shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hidden sm:inline-block">
+                    ⚡ Smart Search
+                </span>
+            </div>
+            @if(trim($search) !== '')
+                <div class="mt-2 text-xs font-bold text-zinc-500">
+                    Menampilkan {{ count($articles) }} hasil untuk "<span class="text-neo-purple">{{ $search }}</span>"
+                </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Library Grid -->
     @if(count($articles) > 0)
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" wire:poll.5s>
@@ -66,6 +94,17 @@
                                 <span class="inline-block bg-green-500 text-white text-xs font-bold px-2 py-1 uppercase tracking-wider neo-border ml-1 mt-2">
                                     Selesai
                                 </span>
+                            @endif
+
+                            {{-- Keywords tags (max 3) --}}
+                            @if($article->keywords && count($article->keywords) > 0)
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    @foreach(array_slice($article->keywords, 0, 3) as $keyword)
+                                        <span class="inline-block bg-neo-yellow/80 text-black text-[10px] font-bold px-1.5 py-0.5 border-2 border-black">
+                                            {{ $keyword }}
+                                        </span>
+                                    @endforeach
+                                </div>
                             @endif
                         </div>
                     </a>

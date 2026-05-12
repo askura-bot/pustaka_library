@@ -138,14 +138,17 @@ class GeminiService
             self::UNIVERSAL_KEYS
         ));
 
+        // Keywords instruction (always required)
+        $keywordsInstruction = "'keywords' (array berisi tepat 5 kata kunci yang paling menggambarkan isi dokumen, campuran Bahasa Indonesia dan Inggris, contoh: [\"machine learning\", \"klasifikasi teks\", \"NLP\", \"deep learning\", \"analisis sentimen\"])";
+
         if ($isArticle) {
-            // Specific prompt for "Article" type — 8 points total
             return 'Analisis dokumen jurnal/artikel ilmiah terlampir. '.
                    'Berikan output HANYA dalam format JSON valid. '.
-                   'Ekstrak tepat 8 poin informasi berikut: '.
+                   'Ekstrak informasi berikut: '.
                    "METADATA: {$metadataDescription}. ".
                    "KOLOM SPESIFIK ARTIKEL: {$templateColumnsList} (isi sesuai data yang ditemukan di dokumen). ".
                    "ANALISIS UMUM: {$universalDescription}. ".
+                   "KATA KUNCI: {$keywordsInstruction}. ".
                    'Catatan: Untuk kolom spesifik artikel, gunakan Bahasa Indonesia kecuali untuk judul, nama penulis, nama jurnal, dan DOI yang harus tetap dalam bahasa aslinya. '.
                    'Jangan tambahkan awalan ```json atau akhiran apapun, berikan JSON mentah saja.';
         }
@@ -157,6 +160,7 @@ class GeminiService
                "METADATA WAJIB: {$metadataDescription}. ".
                "KOLOM TEMPLATE: {$templateColumnsList} (isi sesuai data yang ditemukan di dokumen). ".
                "ANALISIS WAJIB: {$universalDescription}. ".
+               "KATA KUNCI: {$keywordsInstruction}. ".
                'Catatan: Semua jawaban dalam Bahasa Indonesia kecuali judul asli, nama penulis, dan istilah teknis. '.
                'Jangan tambahkan awalan ```json atau akhiran apapun, berikan JSON mentah saja.';
     }
@@ -240,5 +244,177 @@ class GeminiService
             'citation' => $result['citation'] ?? '',
             'bibliography' => $result['bibliography'] ?? '',
         ];
+    }
+
+    /**
+     * Chat with Gemini using article analysis as context.
+     *
+     * Sends the user's message along with the article's analysis_results
+     * so Gemini can answer questions about the specific document.
+     *
+     * @param  string  $message  User's question
+     * @param  array<string, mixed>  $analysisContext  The article's analysis_results
+     * @param  array<int, array{message: string, response: string}>  $chatHistory  Previous chat messages for continuity
+     */
+    public function chatWithContext(string $message, array $analysisContext, array $chatHistory = []): string
+    {
+        $url = "{$this->baseUrl}/models/gemini-2.5-flash:generateContent?key={$this->apiKey}";
+
+        $contextJson = json_encode($analysisContext, JSON_UNESCAPED_UNICODE);
+
+        // Build conversation history
+        $contents = [];
+
+        // System-like instruction as first user message
+        $systemPrompt = 'Kamu adalah asisten riset akademik yang membantu mahasiswa memahami dokumen ilmiah. '.
+                        "Berikut adalah data analisis dari sebuah dokumen:\n\n".
+                        "{$contextJson}\n\n".
+                        'Jawab pertanyaan user berdasarkan data di atas. Gunakan Bahasa Indonesia yang mudah dipahami. '.
+                        'Jika informasi tidak tersedia di data, katakan dengan jujur bahwa data tersebut tidak ada dalam analisis.';
+
+        $contents[] = [
+            'role' => 'user',
+            'parts' => [['text' => $systemPrompt]],
+        ];
+        $contents[] = [
+            'role' => 'model',
+            'parts' => [['text' => 'Baik, saya siap membantu kamu memahami dokumen ini. Silakan tanya apa saja!']],
+        ];
+
+        // Append previous chat history for continuity (last 10 messages)
+        $recentHistory = array_slice($chatHistory, -10);
+        foreach ($recentHistory as $chat) {
+            $contents[] = [
+                'role' => 'user',
+                'parts' => [['text' => $chat['message']]],
+            ];
+            $contents[] = [
+                'role' => 'model',
+                'parts' => [['text' => $chat['response']]],
+            ];
+        }
+
+        // Current user message
+        $contents[] = [
+            'role' => 'user',
+            'parts' => [['text' => $message]],
+        ];
+
+        $payload = [
+            'contents' => $contents,
+            'generationConfig' => [
+                'temperature' => 0.7,
+                'maxOutputTokens' => 2048,
+            ],
+        ];
+
+        $response = Http::timeout(60)->post($url, $payload);
+
+        if ($response->status() === 429) {
+            throw new \Exception('RATE_LIMIT_EXCEEDED');
+        }
+
+        if ($response->failed()) {
+            Log::error('Gemini Chat Error: '.$response->body());
+            throw new \Exception('Gagal mendapatkan respons dari AI.');
+        }
+
+        $data = $response->json();
+
+        return $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Maaf, saya tidak bisa menjawab saat ini.';
+    }
+
+    /**
+     * Global chat across the user's entire library using keyword-retrieved context.
+     *
+     * @param  string  $message  User's question
+     * @param  array<int, array{title: ?string, author: ?string, so_what: ?string, keywords: ?array}>  $relevantArticles  Top matched articles
+     * @param  array<int, array{message: string, response: string}>  $chatHistory  Previous chat messages
+     */
+    public function globalChat(string $message, array $relevantArticles, array $chatHistory = []): string
+    {
+        $url = "{$this->baseUrl}/models/gemini-2.0-flash:generateContent?key={$this->apiKey}";
+
+        // Build context from relevant articles
+        $articlesContext = '';
+        foreach ($relevantArticles as $i => $article) {
+            $num = $i + 1;
+            $title = $article['title'] ?? 'Tanpa Judul';
+            $author = $article['author'] ?? 'Penulis tidak diketahui';
+            $soWhat = $article['so_what'] ?? 'Tidak tersedia';
+            $keywords = is_array($article['keywords'] ?? null) ? implode(', ', $article['keywords']) : 'Tidak tersedia';
+            $abstract = $article['abstract'] ?? '';
+
+            $articlesContext .= "--- Artikel {$num} ---\n";
+            $articlesContext .= "Judul: {$title}\n";
+            $articlesContext .= "Penulis: {$author}\n";
+            $articlesContext .= "Kata Kunci: {$keywords}\n";
+            $articlesContext .= "Esensi (So What): {$soWhat}\n";
+            if ($abstract) {
+                $articlesContext .= "Abstrak: {$abstract}\n";
+            }
+            $articlesContext .= "\n";
+        }
+
+        $contents = [];
+
+        $systemPrompt = 'Kamu adalah asisten riset akademik yang membantu mahasiswa menjawab pertanyaan berdasarkan koleksi pustaka mereka. '.
+                        "Berikut adalah ringkasan dari artikel-artikel yang paling relevan di pustaka user:\n\n".
+                        "{$articlesContext}\n".
+                        "Aturan:\n".
+                        "- Jawab dalam Bahasa Indonesia yang mudah dipahami.\n".
+                        "- WAJIB sebutkan judul artikel yang kamu jadikan referensi dalam jawaban (gunakan format: *Referensi: [Judul Artikel]*).\n".
+                        "- Jika tidak ada artikel yang relevan dengan pertanyaan, katakan dengan jujur.\n".
+                        '- Berikan jawaban yang informatif dan terstruktur.';
+
+        $contents[] = [
+            'role' => 'user',
+            'parts' => [['text' => $systemPrompt]],
+        ];
+        $contents[] = [
+            'role' => 'model',
+            'parts' => [['text' => 'Baik, saya siap membantu! Saya akan menjawab berdasarkan koleksi pustakamu dan selalu menyebutkan sumber referensinya. Silakan tanya!']],
+        ];
+
+        // Append previous chat history
+        $recentHistory = array_slice($chatHistory, -10);
+        foreach ($recentHistory as $chat) {
+            $contents[] = [
+                'role' => 'user',
+                'parts' => [['text' => $chat['message']]],
+            ];
+            $contents[] = [
+                'role' => 'model',
+                'parts' => [['text' => $chat['response']]],
+            ];
+        }
+
+        $contents[] = [
+            'role' => 'user',
+            'parts' => [['text' => $message]],
+        ];
+
+        $payload = [
+            'contents' => $contents,
+            'generationConfig' => [
+                'temperature' => 0.7,
+                'maxOutputTokens' => 2048,
+            ],
+        ];
+
+        $response = Http::timeout(60)->post($url, $payload);
+
+        if ($response->status() === 429) {
+            throw new \Exception('RATE_LIMIT_EXCEEDED');
+        }
+
+        if ($response->failed()) {
+            Log::error('Gemini Global Chat Error: '.$response->body());
+            throw new \Exception('Gagal mendapatkan respons dari AI.');
+        }
+
+        $data = $response->json();
+
+        return $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Maaf, saya tidak bisa menjawab saat ini.';
     }
 }

@@ -75,13 +75,17 @@ class AnalyzeArticleJob implements ShouldQueue
             // 3. Extract citation metadata (title, author, year) with fallback keys
             $metadata = $this->extractCitationMetadata($resultJson ?? []);
 
-            // 4. Simpan hasil lengkap + kolom utama untuk sitasi
+            // 4. Extract keywords from results
+            $keywords = $this->extractKeywords($resultJson ?? []);
+
+            // 5. Simpan hasil lengkap + kolom utama untuk sitasi + keywords
             $this->article->update([
                 'status' => 'completed',
                 'analysis_results' => $resultJson,
                 'title' => $metadata['title'],
                 'author' => $metadata['author'],
                 'year' => $metadata['year'],
+                'keywords' => $keywords,
             ]);
 
         } catch (\Exception $e) {
@@ -94,6 +98,36 @@ class AnalyzeArticleJob implements ShouldQueue
                 $geminiService->deleteFile($fileUri);
             }
         }
+    }
+
+    /**
+     * Extract keywords from analysis results.
+     *
+     * @param  array<string, mixed>  $results
+     * @return array<int, string>|null
+     */
+    protected function extractKeywords(array $results): ?array
+    {
+        $candidates = ['keywords', 'Keywords', 'kata_kunci', 'Kata Kunci'];
+
+        foreach ($candidates as $key) {
+            if (! array_key_exists($key, $results)) {
+                continue;
+            }
+
+            $value = $results[$key];
+
+            if (is_array($value)) {
+                return array_values(array_filter($value, 'is_scalar'));
+            }
+
+            // If it's a comma-separated string
+            if (is_string($value) && trim($value) !== '') {
+                return array_map('trim', explode(',', $value));
+            }
+        }
+
+        return null;
     }
 
     /**

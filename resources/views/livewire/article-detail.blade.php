@@ -184,6 +184,23 @@
                     </div>
                 @endif
 
+                {{-- KEYWORDS --}}
+                @if($article->keywords && count($article->keywords) > 0)
+                    <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
+                        <h3 class="text-lg font-black uppercase mb-3 flex items-center gap-2">
+                            <span class="bg-neo-yellow text-black w-7 h-7 flex items-center justify-center neo-border text-xs">🏷️</span>
+                            Kata Kunci
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($article->keywords as $keyword)
+                                <span class="bg-neo-yellow text-black neo-border px-3 py-1 text-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                    {{ $keyword }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 {{-- EXTRA RESULTS (non-template, non-reserved) --}}
                 @php
                     $templateCols = $article->ktiType->columns ?? [];
@@ -318,6 +335,105 @@
             @else
                 <div class="bg-zinc-100 neo-border shadow-neo p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
                     <p class="text-xl font-bold text-zinc-500">Belum ada hasil analisis.</p>
+                </div>
+            @endif
+
+            {{-- CHAT PANEL (always visible when analysis is completed) --}}
+            @if($article->status === 'completed' && $article->analysis_results)
+                <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col"
+                     x-data="{ }"
+                     x-init="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })"
+                     @chat-updated.window="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })">
+
+                    {{-- Chat Header --}}
+                    <div class="bg-black text-white border-b-4 border-black px-5 py-3 flex items-center justify-between">
+                        <h3 class="text-lg font-black uppercase flex items-center gap-2">
+                            <span class="text-xl">💬</span> Tanya AI tentang Artikel Ini
+                        </h3>
+                        <span class="text-xs opacity-70 font-bold">{{ count($chatHistory) }} pesan</span>
+                    </div>
+
+                    {{-- Chat Messages --}}
+                    <div class="flex flex-col gap-3 p-4 overflow-y-auto max-h-[400px] min-h-[200px]" x-ref="chatScroll">
+                        @if(count($chatHistory) === 0)
+                            <div class="flex flex-col items-center justify-center text-center py-8 text-zinc-400">
+                                <div class="bg-neo-yellow text-black neo-border p-4 mb-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    </svg>
+                                </div>
+                                <p class="font-bold text-sm">Belum ada percakapan</p>
+                                <p class="text-xs mt-1">Tanya apa saja tentang isi dokumen ini!</p>
+                            </div>
+                        @else
+                            @foreach($chatHistory as $chat)
+                                {{-- User Message --}}
+                                <div class="flex justify-end" wire:key="chat-{{ $chat->id }}-user">
+                                    <div class="bg-neo-yellow text-black neo-border p-3 max-w-[85%] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                                        <p class="text-sm font-medium leading-relaxed">{{ $chat->message }}</p>
+                                        <span class="text-xs opacity-60 font-bold mt-1 block text-right">{{ $chat->created_at->format('H:i') }}</span>
+                                    </div>
+                                </div>
+
+                                {{-- AI Response --}}
+                                <div class="flex justify-start" wire:key="chat-{{ $chat->id }}-ai">
+                                    <div class="bg-neo-purple text-white neo-border p-3 max-w-[85%] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                                        <div class="flex items-center gap-1 mb-1">
+                                            <span class="text-xs font-black uppercase opacity-80">🤖 AI</span>
+                                        </div>
+                                        <p class="text-sm font-medium leading-relaxed whitespace-pre-wrap">{{ $chat->response }}</p>
+                                        <span class="text-xs opacity-60 font-bold mt-1 block">{{ $chat->created_at->format('H:i') }}</span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+
+                        {{-- Typing indicator --}}
+                        <div wire:loading wire:target="sendMessage" class="flex justify-start">
+                            <div class="bg-neo-purple/80 text-white neo-border p-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-black uppercase">🤖 AI sedang mengetik</span>
+                                    <span class="flex gap-1">
+                                        <span class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                                        <span class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                                        <span class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Chat Error --}}
+                    @if($chatError)
+                        <div class="mx-4 mb-2 bg-red-100 neo-border p-2 text-red-700 font-bold text-xs">
+                            {{ $chatError }}
+                        </div>
+                    @endif
+
+                    {{-- Chat Input --}}
+                    <div class="border-t-4 border-black p-4">
+                        <form wire:submit="sendMessage" class="flex gap-2">
+                            <input wire:model="chatMessage"
+                                   type="text"
+                                   placeholder="Tanya sesuatu tentang artikel ini..."
+                                   class="neo-input grow text-sm bg-zinc-50"
+                                   wire:loading.attr="disabled"
+                                   wire:target="sendMessage"
+                                   autocomplete="off" />
+                            <button type="submit"
+                                    wire:loading.attr="disabled"
+                                    wire:target="sendMessage"
+                                    class="neo-btn neo-btn-yellow shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 shrink-0">
+                                <span wire:loading.remove wire:target="sendMessage">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                </span>
+                                <span wire:loading wire:target="sendMessage">
+                                    <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                </span>
+                            </button>
+                        </form>
+                        @error('chatMessage') <span class="text-red-500 font-bold text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
                 </div>
             @endif
         </div>
