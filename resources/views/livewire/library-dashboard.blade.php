@@ -1,9 +1,9 @@
-<div class="text-black dark:text-white">
+<div class="text-black">
     <!-- Header Section -->
     <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
         <div>
-            <h2 class="text-4xl font-black uppercase tracking-tight mb-2 text-black dark:text-white">Pustaka Dokumen</h2>
-            <p class="text-zinc-600 dark:text-zinc-400 font-medium">Kelola dan upload karya tulis ilmiah Anda untuk dianalisis oleh AI.</p>
+            <h2 class="text-4xl font-black uppercase tracking-tight mb-2 text-black">Pustaka Dokumen</h2>
+            <p class="text-zinc-600 font-medium">Kelola dan upload karya tulis ilmiah Anda untuk dianalisis oleh AI.</p>
         </div>
         <button wire:click="$set('showUploadModal', true)" class="neo-btn neo-btn-green w-full md:w-auto shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none">
             + Tambah Dokumen
@@ -25,7 +25,7 @@
                 </button>
             </div>
             @if(trim($search) !== '')
-                <div class="mt-2 text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                <div class="mt-2 text-xs font-bold text-zinc-500">
                     Menampilkan {{ count($articles) }} hasil untuk "<span class="text-neo-purple">{{ $search }}</span>"
                 </div>
             @endif
@@ -224,7 +224,7 @@
          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity"
          x-transition.opacity>
          
-        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white neo-border p-8 max-w-md w-full shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center" 
+        <div class="bg-white text-black neo-border p-8 max-w-md w-full shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center" 
              x-show="$wire.showDeleteModal" 
              x-transition:enter="transition ease-out duration-200" 
              x-transition:enter-start="opacity-0 scale-95" 

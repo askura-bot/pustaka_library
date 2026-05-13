@@ -1,4 +1,4 @@
-<div class="text-black dark:text-white flex flex-col h-[calc(100vh-120px)]"
+<div class="text-black flex flex-col h-[calc(100vh-120px)]"
      x-data="{ }"
      x-init="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })"
      @chat-updated.window="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })">
@@ -6,11 +6,11 @@
     {{-- Header --}}
     <div class="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-            <h2 class="text-3xl font-black uppercase tracking-tight text-black dark:text-white flex items-center gap-3">
+            <h2 class="text-3xl font-black uppercase tracking-tight text-black flex items-center gap-3">
                 <span class="bg-neo-green text-black neo-border p-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-3">🤖</span>
                 Ask AI — Research Assistant
             </h2>
-            <p class="text-zinc-600 dark:text-zinc-400 font-medium mt-1">Tanya apa saja tentang seluruh koleksi pustakamu. AI akan mencari referensi yang relevan.</p>
+            <p class="text-zinc-600 font-medium mt-1">Tanya apa saja tentang seluruh koleksi pustakamu. AI akan mencari referensi yang relevan.</p>
         </div>
         <a href="{{ route('dashboard') }}"
            class="neo-border bg-neo-yellow text-black px-4 py-2 font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-sm whitespace-nowrap">
@@ -19,7 +19,7 @@
     </div>
 
     {{-- Chat Container --}}
-    <div class="bg-white dark:bg-zinc-900 neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] flex flex-col grow overflow-hidden">
+    <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col grow overflow-hidden">
 
         {{-- Chat Messages --}}
         <div class="flex flex-col gap-4 p-5 overflow-y-auto grow" x-ref="chatScroll">
@@ -90,7 +90,7 @@
         @endif
 
         {{-- Chat Input --}}
-        <div class="border-t-4 border-black dark:border-white/80 p-5 bg-zinc-50 dark:bg-zinc-800">
+        <div class="border-t-4 border-black p-5 bg-zinc-50">
             <form wire:submit="sendMessage" class="flex gap-3">
                 <input wire:model="message"
                        type="text"
