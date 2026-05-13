@@ -1,4 +1,4 @@
-<div class="text-black dark:text-black">
+<div class="text-black dark:text-white">
     {{-- Navigation Bar --}}
     <div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div class="flex items-center gap-4">
@@ -31,7 +31,7 @@
 
         {{-- KIRI: Document Viewer --}}
         <div class="flex flex-col gap-6">
-            <div class="bg-white neo-border shadow-neo min-h-[600px] lg:min-h-[750px] flex flex-col">
+            <div class="bg-white dark:bg-zinc-900 neo-border shadow-neo min-h-[600px] lg:min-h-[750px] flex flex-col">
                 <div class="bg-black text-white px-4 py-3 font-bold uppercase text-sm flex items-center justify-between">
                     <span>📄 Dokumen Asli</span>
                     <span class="text-xs opacity-70 uppercase">{{ $article->file_type }}</span>
@@ -109,20 +109,20 @@
 
                 {{-- BAGIAN 1: ABSTRAK --}}
                 @if(isset($results['abstract']))
-                    <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
+                    <div class="bg-white dark:bg-zinc-900 neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] p-5">
                         <h3 class="text-lg font-black uppercase mb-2 text-neo-purple flex items-center gap-2">
                             <span class="bg-neo-purple text-white w-7 h-7 flex items-center justify-center neo-border text-xs">📝</span>
                             Abstrak
                         </h3>
-                        <p class="text-zinc-800 leading-relaxed font-medium text-sm">{{ $results['abstract'] }}</p>
+                        <p class="text-zinc-800 dark:text-zinc-200 leading-relaxed font-medium text-sm">{{ $results['abstract'] }}</p>
                     </div>
                 @endif
 
                 {{-- BAGIAN 2: TABEL ANALISIS (The Core) --}}
                 @if(count($dynamicColumns) > 0 && collect($dynamicColumns)->filter()->isNotEmpty())
-                    <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-                        <div class="bg-neo-yellow px-5 py-3 border-b-4 border-black">
-                            <h3 class="text-lg font-black uppercase flex items-center gap-2">
+                    <div class="bg-white dark:bg-zinc-900 neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] overflow-hidden">
+                        <div class="bg-neo-yellow px-5 py-3 border-b-4 border-black dark:border-white/80">
+                            <h3 class="text-lg font-black uppercase flex items-center gap-2 text-black">
                                 <span class="bg-black text-white w-7 h-7 flex items-center justify-center neo-border text-xs">📊</span>
                                 Tabel Analisis
                             </h3>
@@ -130,18 +130,18 @@
                         <div class="overflow-x-auto">
                             <table class="w-full">
                                 <thead>
-                                    <tr class="bg-neo-yellow/40">
-                                        <th class="border-b-4 border-r-4 border-black px-4 py-2 text-left font-black uppercase text-xs w-1/3">Kolom</th>
-                                        <th class="border-b-4 border-black px-4 py-2 text-left font-black uppercase text-xs">Hasil</th>
+                                    <tr class="bg-neo-yellow/40 dark:bg-neo-yellow/20">
+                                        <th class="border-b-4 border-r-4 border-black dark:border-white/80 px-4 py-2 text-left font-black uppercase text-xs w-1/3">Kolom</th>
+                                        <th class="border-b-4 border-black dark:border-white/80 px-4 py-2 text-left font-black uppercase text-xs">Hasil</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($dynamicColumns as $columnName => $columnValue)
-                                        <tr class="border-b-2 border-black/15 last:border-b-0 hover:bg-neo-yellow/5 transition-colors">
-                                            <td class="border-r-4 border-black px-4 py-3 font-bold text-xs bg-zinc-50">
+                                        <tr class="border-b-2 border-black/15 dark:border-white/15 last:border-b-0 hover:bg-neo-yellow/5 transition-colors">
+                                            <td class="border-r-4 border-black dark:border-white/80 px-4 py-3 font-bold text-xs bg-zinc-50 dark:bg-zinc-800">
                                                 {{ $columnName }}
                                             </td>
-                                            <td class="px-4 py-3 font-medium text-zinc-800 text-sm leading-relaxed">
+                                            <td class="px-4 py-3 font-medium text-zinc-800 dark:text-zinc-200 text-sm leading-relaxed">
                                                 @if(is_array($columnValue))
                                                     <ul class="list-disc list-inside space-y-1">
                                                         @foreach($columnValue as $item)
@@ -167,7 +167,7 @@
                     $displayKeywords = $article->keywords ?? ($results['keywords'] ?? null);
                 @endphp
                 @if($displayKeywords && is_array($displayKeywords) && count($displayKeywords) > 0)
-                    <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-5">
+                    <div class="bg-white dark:bg-zinc-900 neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] p-5">
                         <h3 class="text-lg font-black uppercase mb-3 flex items-center gap-2">
                             <span class="bg-neo-yellow text-black w-7 h-7 flex items-center justify-center neo-border text-xs">🏷️</span>
                             Kata Kunci
@@ -207,7 +207,7 @@
                 @endif
 
                 {{-- ACADEMIC CITATION & BIBLIOGRAPHY --}}
-                <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                <div class="bg-white dark:bg-zinc-900 neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)]"
                      x-data="{ activeTab: 'intext', copiedIntext: false, copiedBib: false, copiedAiCitation: false, copiedAiBib: false }">
 
                     <div class="bg-neo-yellow border-b-4 border-black px-5 py-3">
@@ -311,7 +311,7 @@
 
             {{-- CHAT PANEL (always visible when analysis is completed) --}}
             @if($article->status === 'completed' && $article->analysis_results)
-                <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col"
+                <div class="bg-white dark:bg-zinc-900 neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] flex flex-col"
                      x-data="{ }"
                      x-init="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })"
                      @chat-updated.window="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })">
@@ -382,7 +382,7 @@
                     @endif
 
                     {{-- Chat Input --}}
-                    <div class="border-t-4 border-black p-4">
+                    <div class="border-t-4 border-black dark:border-white/80 p-4">
                         <form wire:submit="sendMessage" class="flex gap-2">
                             <input wire:model="chatMessage"
                                    type="text"

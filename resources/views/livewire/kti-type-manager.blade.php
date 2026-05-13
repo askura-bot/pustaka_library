@@ -7,7 +7,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Form Section -->
         <div class="lg:col-span-1">
-            <div class="bg-white neo-border neo-shadow p-6 text-black">
+            <div class="bg-white dark:bg-zinc-900 neo-border neo-shadow p-6 text-black dark:text-white">
                 <h3 class="text-2xl font-black uppercase mb-6">{{ $editingId ? 'Edit Template' : 'Template Baru' }}</h3>
                 
                 <form wire:submit="save" class="flex flex-col gap-6">
@@ -77,7 +77,7 @@
             @if(count($ktiTypes) > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach($ktiTypes as $type)
-                        <div class="bg-white text-black neo-border neo-shadow p-6 flex flex-col gap-4 transform transition-transform hover:-translate-y-1">
+                        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white neo-border neo-shadow p-6 flex flex-col gap-4 transform transition-transform hover:-translate-y-1">
                             <div class="flex justify-between items-start gap-2">
                                 <h4 class="text-2xl font-black uppercase leading-tight">{{ $type->name }}</h4>
                                 <div class="flex gap-2 flex-shrink-0">
@@ -100,7 +100,7 @@
                                     @php
                                         $isProtectedCol = $type->name === 'Article' && in_array($col, \App\Models\KtiType::ARTICLE_PROTECTED_COLUMNS, true);
                                     @endphp
-                                    <span class="border-2 border-black px-3 py-1 text-sm font-bold text-black {{ $isProtectedCol ? 'bg-neo-yellow' : 'bg-gray-100' }}">
+                                    <span class="border-2 border-black dark:border-white/70 px-3 py-1 text-sm font-bold {{ $isProtectedCol ? 'bg-neo-yellow text-black' : 'bg-gray-100 dark:bg-zinc-700 text-black dark:text-white' }}">
                                         {{ $col }}{{ $isProtectedCol ? ' 🔒' : '' }}
                                     </span>
                                 @endforeach

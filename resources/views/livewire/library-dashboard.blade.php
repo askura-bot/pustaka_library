@@ -1,4 +1,4 @@
-<div class="text-black dark:text-black">
+<div class="text-black dark:text-white">
     <!-- Header Section -->
     <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
         <div>
@@ -49,7 +49,7 @@
                 @endphp
                 <div class="neo-border neo-shadow flex flex-col transform transition-transform hover:-translate-y-2 {{ $colorClass }} {{ str_contains($colorClass, 'bg-neo-purple') ? 'text-white' : 'text-black' }}">
                     
-                    <a href="{{ route('library.article', $article->id) }}" class="flex-grow p-5 flex flex-col gap-4">
+                    <a href="{{ route('library.article', $article->id) }}" class="grow p-5 flex flex-col gap-4">
                         <div class="flex justify-between items-start gap-2">
                             <!-- Icon PDF/DOCX -->
                             <div class="bg-black text-white p-2 border-2 border-black">
@@ -227,7 +227,7 @@
          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity"
          x-transition.opacity>
          
-        <div class="bg-white text-black neo-border p-8 max-w-md w-full shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center" 
+        <div class="bg-white dark:bg-zinc-900 text-black dark:text-white neo-border p-8 max-w-md w-full shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center" 
              x-show="$wire.showDeleteModal" 
              x-transition:enter="transition ease-out duration-200" 
              x-transition:enter-start="opacity-0 scale-95" 

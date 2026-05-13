@@ -1,4 +1,4 @@
-<div class="text-black dark:text-black flex flex-col h-[calc(100vh-120px)]"
+<div class="text-black dark:text-white flex flex-col h-[calc(100vh-120px)]"
      x-data="{ }"
      x-init="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })"
      @chat-updated.window="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })">
@@ -19,7 +19,7 @@
     </div>
 
     {{-- Chat Container --}}
-    <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col grow overflow-hidden">
+    <div class="bg-white dark:bg-zinc-900 neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,0.1)] flex flex-col grow overflow-hidden">
 
         {{-- Chat Messages --}}
         <div class="flex flex-col gap-4 p-5 overflow-y-auto grow" x-ref="chatScroll">
@@ -90,7 +90,7 @@
         @endif
 
         {{-- Chat Input --}}
-        <div class="border-t-4 border-black p-5 bg-zinc-50">
+        <div class="border-t-4 border-black dark:border-white/80 p-5 bg-zinc-50 dark:bg-zinc-800">
             <form wire:submit="sendMessage" class="flex gap-3">
                 <input wire:model="message"
                        type="text"
