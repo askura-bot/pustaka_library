@@ -126,6 +126,15 @@ select:focus[data-flux-control] {
     @apply text-zinc-500! font-medium!;
 }
 
+/* Flux modal — Neubrutalism white background */
+[data-flux-modal] {
+    @apply bg-white! text-black! border-4! border-black! rounded-none! shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]!;
+}
+
+[data-flux-modal-overlay] {
+    @apply bg-black/50! backdrop-blur-sm!;
+}
+
 /* ============================================
    NEUBRUTALISM UTILITY CLASSES
    ============================================ */

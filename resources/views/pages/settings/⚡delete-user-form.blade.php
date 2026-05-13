@@ -4,17 +4,11 @@ use Livewire\Component;
 
 new class extends Component {}; ?>
 
-<section class="mt-10 space-y-6">
-    <div class="relative mb-5">
-        <flux:heading>{{ __('Delete account') }}</flux:heading>
-        <flux:subheading>{{ __('Delete your account and all of its resources') }}</flux:subheading>
+<section class="mt-10 space-y-4">
+    <div class="border-t-4 border-black pt-6">
+        <h3 class="text-xl font-black uppercase mb-1">{{ __('Danger Zone') }}</h3>
+        <p class="text-zinc-500 font-medium text-sm mb-4">{{ __('Delete your account and all of its resources') }}</p>
     </div>
-
-    <flux:modal.trigger name="confirm-user-deletion">
-        <flux:button variant="danger" data-test="delete-user-button">
-            {{ __('Delete account') }}
-        </flux:button>
-    </flux:modal.trigger>
 
     <livewire:pages::settings.delete-user-modal />
 </section>

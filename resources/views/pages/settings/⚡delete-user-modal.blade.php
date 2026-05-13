@@ -10,6 +10,8 @@ new class extends Component {
 
     public string $password = '';
 
+    public bool $showModal = false;
+
     /**
      * Check if the current user is an OAuth-only user (no local password).
      */
@@ -25,7 +27,6 @@ new class extends Component {
      */
     public function deleteUser(Logout $logout): void
     {
-        // OAuth users don't need password confirmation
         if (! $this->isOAuthUser()) {
             $this->validate([
                 'password' => $this->currentPasswordRules(),
@@ -38,31 +39,59 @@ new class extends Component {
     }
 }; ?>
 
-<flux:modal name="confirm-user-deletion" :show="$errors->isNotEmpty()" focusable class="max-w-lg">
-    <form method="POST" wire:submit="deleteUser" class="space-y-6">
-        <div>
-            <flux:heading size="lg">{{ __('Are you sure you want to delete your account?') }}</flux:heading>
+{{-- Custom Neubrutalism Modal --}}
+<div>
+    {{-- Trigger --}}
+    <button wire:click="$set('showModal', true)"
+            class="neo-btn bg-red-500 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            data-test="delete-user-button">
+        🗑️ {{ __('Delete account') }}
+    </button>
 
-            <flux:subheading>
-                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted.') }}
-                @if(! $this->isOAuthUser())
-                    {{ __('Please enter your password to confirm you would like to permanently delete your account.') }}
-                @endif
-            </flux:subheading>
+    {{-- Modal Overlay --}}
+    @if($showModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+             wire:click.self="$set('showModal', false)">
+
+            {{-- Modal Content (Neubrutalism) --}}
+            <div class="bg-white neo-border p-8 max-w-md w-full shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+                {{-- Warning Icon --}}
+                <div class="bg-red-500 text-white w-16 h-16 mx-auto neo-border flex items-center justify-center mb-6 transform -rotate-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+
+                <h3 class="text-2xl font-black uppercase text-center mb-3">{{ __('Delete Account?') }}</h3>
+                <p class="text-zinc-600 font-medium text-center mb-6 text-sm">
+                    {{ __('Once deleted, all your data will be permanently removed.') }}
+                    @if(! $this->isOAuthUser())
+                        {{ __('Enter your password to confirm.') }}
+                    @endif
+                </p>
+
+                <form wire:submit="deleteUser" class="space-y-4">
+                    @if(! $this->isOAuthUser())
+                        <div>
+                            <label class="font-bold text-sm block mb-2">{{ __('Password') }}</label>
+                            <input wire:model="password" type="password" class="neo-input" required />
+                            @error('password') <span class="text-red-500 font-bold text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                    @endif
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" wire:click="$set('showModal', false)"
+                                class="neo-btn bg-zinc-200 text-black flex-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            {{ __('Cancel') }}
+                        </button>
+                        <button type="submit"
+                                class="neo-btn bg-red-500 text-white flex-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                                data-test="confirm-delete-user-button">
+                            {{ __('Delete') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        @if(! $this->isOAuthUser())
-            <flux:input wire:model="password" :label="__('Password')" type="password" viewable />
-        @endif
-
-        <div class="flex justify-end space-x-2 rtl:space-x-reverse">
-            <flux:modal.close>
-                <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
-            </flux:modal.close>
-
-            <flux:button variant="danger" type="submit" data-test="confirm-delete-user-button">
-                {{ __('Delete account') }}
-            </flux:button>
-        </div>
-    </form>
-</flux:modal>
+    @endif
+</div>
