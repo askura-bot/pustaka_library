@@ -18,17 +18,14 @@
                     <input wire:model.live.debounce.300ms="search"
                            type="text"
                            placeholder="Cari judul, penulis, kata kunci, atau isi analisis..."
-                           class="neo-input bg-white text-black font-medium pl-12 pr-4" />
-                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    </div>
+                           class="neo-input font-medium" />
                 </div>
-                <span class="bg-neo-purple text-white neo-border px-3 py-2 text-xs font-black uppercase tracking-wider whitespace-nowrap shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hidden sm:inline-block">
-                    ⚡ Smart Search
-                </span>
+                <button type="button" class="neo-btn neo-btn-purple shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-3 shrink-0" title="Smart Search">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </button>
             </div>
             @if(trim($search) !== '')
-                <div class="mt-2 text-xs font-bold text-zinc-500">
+                <div class="mt-2 text-xs font-bold text-zinc-500 dark:text-zinc-400">
                     Menampilkan {{ count($articles) }} hasil untuk "<span class="text-neo-purple">{{ $search }}</span>"
                 </div>
             @endif
