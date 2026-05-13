@@ -11,9 +11,21 @@ class GeminiService
 
     protected string $baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
 
+    protected string $modelAnalysis;
+
+    protected string $modelReference;
+
+    protected string $modelChat;
+
+    protected string $modelGlobalChat;
+
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key');
+        $this->modelAnalysis = config('services.gemini.model_analysis', 'gemini-3-flash-preview');
+        $this->modelReference = config('services.gemini.model_reference', 'gemini-3-flash-preview');
+        $this->modelChat = config('services.gemini.model_chat', 'gemini-2.5-flash');
+        $this->modelGlobalChat = config('services.gemini.model_global_chat', 'gemini-2.0-flash');
     }
 
     /**
@@ -39,7 +51,7 @@ class GeminiService
     }
 
     /**
-     * Menganalisis dokumen menggunakan Gemini 3 Flash.
+     * Menganalisis dokumen menggunakan model analysis.
      *
      * @param  array<int, string>  $columns  Template columns from kti_types
      * @param  string  $ktiTypeName  Name of the KTI type (e.g. "Article")
@@ -47,7 +59,7 @@ class GeminiService
      */
     public function analyzeDocument(string $fileUri, string $mimeType, array $columns, string $ktiTypeName = ''): ?array
     {
-        $url = "{$this->baseUrl}/models/gemini-3-flash-preview:generateContent?key={$this->apiKey}";
+        $url = "{$this->baseUrl}/models/{$this->modelAnalysis}:generateContent?key={$this->apiKey}";
 
         $prompt = $this->buildPrompt($columns, $ktiTypeName);
 
@@ -88,7 +100,6 @@ class GeminiService
         $data = $response->json();
         $textResult = $data['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
 
-        // Bersihkan hasil jika masih terdapat backticks dari markdown
         $textResult = str_replace(['```json', '```'], '', $textResult);
 
         return json_decode(trim($textResult), true);
@@ -96,7 +107,6 @@ class GeminiService
 
     /**
      * Build the extraction prompt based on KTI type.
-     * Returns a flat JSON structure without categories like METADATA/ANALISIS UMUM.
      *
      * @param  array<int, string>  $columns
      */
@@ -104,7 +114,6 @@ class GeminiService
     {
         $isArticle = strtolower(trim($ktiTypeName)) === 'article';
 
-        // Convert template column names to lowercase snake_case keys for JSON
         $columnKeys = array_map(fn ($col) => "'{$col}'", $columns);
         $columnsList = implode(', ', $columnKeys);
 
@@ -121,7 +130,6 @@ class GeminiService
                    'Jangan tambahkan awalan ```json atau akhiran apapun, berikan JSON mentah saja.';
         }
 
-        // Generic prompt for custom KTI types
         return 'Analisis dokumen terlampir. '.
                'Berikan output HANYA dalam format JSON valid dengan kunci-kunci berikut: '.
                "{$columnsList}, ".
@@ -150,16 +158,13 @@ class GeminiService
     /**
      * Generate formatted citation and bibliography from analysis JSON data.
      *
-     * Sends the extracted metadata to Gemini (no file upload needed) and asks
-     * it to produce a properly formatted in-text citation and bibliography entry.
-     *
      * @param  array<string, mixed>  $jsonData  The analysis_results data
      * @param  string  $style  Citation style (apa, mla, ieee, harvard)
      * @return array{citation: string, bibliography: string}
      */
     public function generateReference(array $jsonData, string $style = 'apa'): array
     {
-        $url = "{$this->baseUrl}/models/gemini-3-flash-preview:generateContent?key={$this->apiKey}";
+        $url = "{$this->baseUrl}/models/{$this->modelReference}:generateContent?key={$this->apiKey}";
 
         $styleName = strtoupper($style);
         $jsonString = json_encode($jsonData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
@@ -218,23 +223,18 @@ class GeminiService
     /**
      * Chat with Gemini using article analysis as context.
      *
-     * Sends the user's message along with the article's analysis_results
-     * so Gemini can answer questions about the specific document.
-     *
      * @param  string  $message  User's question
      * @param  array<string, mixed>  $analysisContext  The article's analysis_results
      * @param  array<int, array{message: string, response: string}>  $chatHistory  Previous chat messages for continuity
      */
     public function chatWithContext(string $message, array $analysisContext, array $chatHistory = []): string
     {
-        $url = "{$this->baseUrl}/models/gemini-2.5-flash:generateContent?key={$this->apiKey}";
+        $url = "{$this->baseUrl}/models/{$this->modelChat}:generateContent?key={$this->apiKey}";
 
         $contextJson = json_encode($analysisContext, JSON_UNESCAPED_UNICODE);
 
-        // Build conversation history
         $contents = [];
 
-        // System-like instruction as first user message
         $systemPrompt = 'Kamu adalah asisten riset akademik yang membantu mahasiswa memahami dokumen ilmiah. '.
                         "Berikut adalah data analisis dari sebuah dokumen:\n\n".
                         "{$contextJson}\n\n".
@@ -250,7 +250,6 @@ class GeminiService
             'parts' => [['text' => 'Baik, saya siap membantu kamu memahami dokumen ini. Silakan tanya apa saja!']],
         ];
 
-        // Append previous chat history for continuity (last 10 messages)
         $recentHistory = array_slice($chatHistory, -10);
         foreach ($recentHistory as $chat) {
             $contents[] = [
@@ -263,7 +262,6 @@ class GeminiService
             ];
         }
 
-        // Current user message
         $contents[] = [
             'role' => 'user',
             'parts' => [['text' => $message]],
@@ -302,9 +300,8 @@ class GeminiService
      */
     public function globalChat(string $message, array $relevantArticles, array $chatHistory = []): string
     {
-        $url = "{$this->baseUrl}/models/gemini-2.0-flash:generateContent?key={$this->apiKey}";
+        $url = "{$this->baseUrl}/models/{$this->modelGlobalChat}:generateContent?key={$this->apiKey}";
 
-        // Build context from relevant articles
         $articlesContext = '';
         foreach ($relevantArticles as $i => $article) {
             $num = $i + 1;
@@ -345,7 +342,6 @@ class GeminiService
             'parts' => [['text' => 'Baik, saya siap membantu! Saya akan menjawab berdasarkan koleksi pustakamu dan selalu menyebutkan sumber referensinya. Silakan tanya!']],
         ];
 
-        // Append previous chat history
         $recentHistory = array_slice($chatHistory, -10);
         foreach ($recentHistory as $chat) {
             $contents[] = [

@@ -3,95 +3,129 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
-            <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
-                <flux:sidebar.collapse class="lg:hidden" />
-            </flux:sidebar.header>
+    <body class="min-h-screen bg-white dark:bg-zinc-800" x-data="{ mobileMenuOpen: false }">
 
-            <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="document-text" :href="route('library.templates')" :current="request()->routeIs('library.templates')" wire:navigate>
-                        Template KTI
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
-            </flux:sidebar.nav>
+        {{-- TOP NAVIGATION (Sticky) --}}
+        <header class="sticky top-0 z-50 bg-white dark:bg-zinc-900 border-b-4 border-black">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                <div class="flex items-center justify-between h-16">
 
-            <flux:spacer />
+                    {{-- Left: Logo + Nav Links --}}
+                    <div class="flex items-center gap-6">
+                        {{-- Logo --}}
+                        <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-2 shrink-0">
+                            <span class="bg-neo-purple text-white neo-border px-2 py-1 text-sm font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">📚</span>
+                            <span class="text-xl font-black uppercase tracking-tighter text-black dark:text-white">
+                                Digi<span class="text-neo-purple">Lib</span>
+                            </span>
+                        </a>
 
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
+                        {{-- Desktop Nav Links --}}
+                        <nav class="hidden md:flex items-center gap-1">
+                            <a href="{{ route('dashboard') }}" wire:navigate
+                               class="px-3 py-1.5 text-sm font-bold uppercase tracking-wider transition-all border-2 border-transparent hover:border-black hover:bg-neo-yellow {{ request()->routeIs('dashboard') ? 'bg-neo-yellow border-black!' : 'text-zinc-700 dark:text-zinc-300' }}">
+                                Dashboard
+                            </a>
+                            <a href="{{ route('library.templates') }}" wire:navigate
+                               class="px-3 py-1.5 text-sm font-bold uppercase tracking-wider transition-all border-2 border-transparent hover:border-black hover:bg-neo-yellow {{ request()->routeIs('library.templates') ? 'bg-neo-yellow border-black!' : 'text-zinc-700 dark:text-zinc-300' }}">
+                                Template
+                            </a>
+                            <a href="{{ route('library.ask-ai') }}" wire:navigate
+                               class="px-3 py-1.5 text-sm font-bold uppercase tracking-wider transition-all border-2 border-transparent hover:border-black hover:bg-neo-green {{ request()->routeIs('library.ask-ai') ? 'bg-neo-green border-black!' : 'text-zinc-700 dark:text-zinc-300' }}">
+                                🤖 Ask AI
+                            </a>
+                        </nav>
+                    </div>
 
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
+                    {{-- Right: User Menu (Desktop) --}}
+                    <div class="hidden md:flex items-center gap-3">
+                        <a href="{{ route('profile.edit') }}" wire:navigate
+                           class="border-2 border-black bg-white dark:bg-zinc-800 px-3 py-1.5 text-sm font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-2 text-black dark:text-white">
+                            <span class="bg-neo-purple text-white w-6 h-6 flex items-center justify-center text-xs font-black border-2 border-black">
+                                {{ auth()->user()->initials() }}
+                            </span>
+                            <span class="max-w-[120px] truncate">{{ auth()->user()->name }}</span>
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                    class="border-2 border-black bg-red-500 text-white px-3 py-1.5 text-sm font-bold shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all"
+                                    data-test="logout-button">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
 
-            <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
-        </flux:sidebar>
+                    {{-- Mobile: Hamburger Button --}}
+                    <button x-on:click="mobileMenuOpen = !mobileMenuOpen"
+                            class="md:hidden border-2 border-black bg-white p-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all">
+                        <svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <svg x-show="mobileMenuOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
-        <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden">
-            <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
-            <flux:spacer />
-
-            <flux:dropdown position="top" align="end">
-                <flux:profile
-                    :initials="auth()->user()->initials()"
-                    icon-trailing="chevron-down"
-                />
-
-                <flux:menu>
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <flux:avatar
-                                    :name="auth()->user()->name"
-                                    :initials="auth()->user()->initials()"
-                                />
-
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
-                                </div>
-                            </div>
-                        </div>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                            {{ __('Settings') }}
-                        </flux:menu.item>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+            {{-- Mobile Menu (Slide-down) --}}
+            <div x-show="mobileMenuOpen"
+                 x-cloak
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-2"
+                 class="md:hidden border-t-4 border-black bg-white dark:bg-zinc-900">
+                <nav class="flex flex-col p-4 gap-2">
+                    <a href="{{ route('dashboard') }}" wire:navigate x-on:click="mobileMenuOpen = false"
+                       class="px-4 py-3 font-bold uppercase text-sm border-2 border-black {{ request()->routeIs('dashboard') ? 'bg-neo-yellow' : 'bg-white dark:bg-zinc-800' }} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-black dark:text-white">
+                        📋 Dashboard
+                    </a>
+                    <a href="{{ route('library.templates') }}" wire:navigate x-on:click="mobileMenuOpen = false"
+                       class="px-4 py-3 font-bold uppercase text-sm border-2 border-black {{ request()->routeIs('library.templates') ? 'bg-neo-yellow' : 'bg-white dark:bg-zinc-800' }} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-black dark:text-white">
+                        📄 Template KTI
+                    </a>
+                    <a href="{{ route('library.ask-ai') }}" wire:navigate x-on:click="mobileMenuOpen = false"
+                       class="px-4 py-3 font-bold uppercase text-sm border-2 border-black {{ request()->routeIs('library.ask-ai') ? 'bg-neo-green' : 'bg-white dark:bg-zinc-800' }} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-black dark:text-white">
+                        🤖 Ask AI
+                    </a>
+                    <a href="{{ route('profile.edit') }}" wire:navigate x-on:click="mobileMenuOpen = false"
+                       class="px-4 py-3 font-bold uppercase text-sm border-2 border-black bg-white dark:bg-zinc-800 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-black dark:text-white">
+                        ⚙️ Settings
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <flux:menu.item
-                            as="button"
-                            type="submit"
-                            icon="arrow-right-start-on-rectangle"
-                            class="w-full cursor-pointer"
-                            data-test="logout-button"
-                        >
-                            {{ __('Log out') }}
-                        </flux:menu.item>
+                        <button type="submit"
+                                class="w-full px-4 py-3 font-bold uppercase text-sm border-2 border-black bg-red-500 text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-left">
+                            🚪 Logout
+                        </button>
                     </form>
-                </flux:menu>
-            </flux:dropdown>
-        </flux:header>
+                </nav>
+            </div>
+        </header>
 
-        {{ $slot }}
+        {{-- MAIN CONTENT --}}
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            {{ $slot }}
+        </main>
+
+        {{-- Global Ask AI Sticky Button (FAB) --}}
+        @auth
+            @if(!request()->routeIs('library.ask-ai') && !request()->routeIs('library.article'))
+                <a href="{{ route('library.ask-ai') }}"
+                   wire:navigate
+                   class="fixed bottom-6 right-6 z-50 bg-neo-green text-black neo-border p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all group"
+                   title="Ask AI — Research Assistant">
+                    <span class="text-2xl">🤖</span>
+                    <span class="absolute bottom-full right-0 mb-2 bg-black text-white text-xs font-bold px-3 py-1.5 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity neo-border">
+                        Ask AI
+                    </span>
+                </a>
+            @endif
+        @endauth
 
         @persist('toast')
             <flux:toast.group>

@@ -3,7 +3,7 @@
 ## **1. PENDAHULUAN & TUJUAN (OVERVIEW & GOALS)**
 
 * **Nama Proyek:** AI-Powered Research Command Center (Personal Research Library).
-* **Tujuan:** Membantu mahasiswa (khususnya Gen Z) mengelola, memahami, dan menganalisis tumpukan Karya Tulis Ilmiah (KTI) secara instan menggunakan kekuatan Gemini 3 Flash.
+* **Tujuan:** Membantu mahasiswa (khususnya Gen Z) mengelola, memahami, dan menganalisis tumpukan Karya Tulis Ilmiah (KTI) secara instan menggunakan kekuatan Gemini AI.
 * **Masalah yang Diselesaikan:** *Information overload* saat riset, kesulitan memahami jurnal akademik yang kompleks, dan proses pembuatan sitasi/rangkuman yang memakan waktu.
 * **Target Market:** Mahasiswa Universitas (Gen Z).
 
@@ -14,8 +14,9 @@
 * **Backend:** Laravel 13 (Latest).
 * **Frontend:** Tailwind CSS v4 & Livewire 4 (Reaktivitas tinggi tanpa reload).
 * **UI Components:** Flux UI v2 (Neubrutalism-ready component library).
-* **Database:** PostgreSQL (Wajib menggunakan ekstensi `pgvector` untuk pencarian semantik di fase lanjutan).
-* **AI Engine:** Gemini 3 Flash-preview via API Key (Free Tier).
+* **Database:** PostgreSQL.
+* **AI Engine:** Gemini 3 Flash-preview (analisis dokumen) + Gemini 2.0 Flash (chat).
+* **Pencarian:** Keyword-Based Smart Search (JSONB ILIKE query dengan ranking).
 * **Autentikasi:** Laravel Fortify (Standard Auth + 2FA) & Laravel Socialite (Google Sign-In).
 * **Background Jobs:** Laravel Queues (Database driver) dengan *Exponential Backoff* dan timeout 300 detik.
 * **Storage:** Laravel Private Disk (Local) untuk keamanan file PDF/DOCX.
@@ -42,7 +43,7 @@
 
 * **Fitur:**
     * **Hero Section:** Slogan provokatif dan tombol CTA "Mulai Riset Sekarang".
-    * **Feature Grid:** Penjelasan visual 3 fitur utama (AI Analysis, Semantic Search, Custom Template).
+    * **Feature Grid:** Penjelasan visual 3 fitur utama (AI Analysis, Smart Search, Custom Template).
     * **Footer:** Copyright dan branding.
 * **Akses:** Terbuka untuk publik (Unauthenticated).
 
@@ -69,30 +70,39 @@
     * **Article Grid:** Daftar KTI dengan kartu Neubrutalist berwarna-warni.
     * **Upload Modal:** Dropdown pilih Jenis KTI + Drag & drop file PDF/DOCX (maks 10MB).
     * **Status Indicator:** Badge status per artikel (Proses/Selesai/Gagal) dengan polling otomatis.
+    * **Smart Search:** Pencarian keyword-based yang mencari di kolom `title`, `author`, `keywords` (JSONB), dan `analysis_results` (JSONB). Artikel yang cocok di keywords muncul paling atas.
+    * **Keyword Tags:** 3 kata kunci pertama ditampilkan di setiap kartu artikel.
     * **Delete File:** Hapus dokumen (sekaligus menghapus file fisik dari storage).
-    * **Search Bar:** Pencarian teks (Fase lanjutan: Semantic Search via pgvector).
+    * **Global Ask AI (Sticky FAB):** Tombol floating di pojok kanan bawah yang mengarah ke halaman Ask AI. Tersembunyi di halaman detail artikel.
 
 ### **Halaman 5: Detail Artikel (Research Lab)**
 
 * **Fitur:**
     * **Split Screen Layout:** Kiri (PDF Viewer via iframe) | Kanan (AI Analysis Hub).
     * **PDF Viewer:** File PDF ditampilkan langsung dari private storage via signed route. File DOCX menampilkan fallback download.
-    * **AI Analysis Output (8 Poin untuk Article):**
-        1. Abstrak (ringkasan Bahasa Indonesia)
-        2. Judul (dari template)
-        3. Penulis (dari template)
-        4. Jurnal Publikasi (dari template)
-        5. Seri Jurnal (dari template)
-        6. Link DOI (dari template)
-        7. So What? (esensi/relevansi penelitian)
-        8. Kesimpulan (conclusion)
-    * **Tabel Analisis Dinamis:** Merender kolom template dalam tabel Neubrutalism (header kuning, border hitam tebal).
+    * **Analysis Hub (Sisi Kanan) — Urutan Tampilan:**
+        1. **Abstrak:** Kartu putih Neubrutalism.
+        2. **Tabel Analisis:** Tabel dengan header `neo-yellow`, border hitam tebal. Menampilkan kolom dari template KTI (untuk Article: Judul, Penulis, Jurnal Publikasi, Seri Jurnal, Link DOI). Field reserved (abstract, so_what, conclusion, keywords) tidak muncul di tabel.
+        3. **Kata Kunci:** 5 badge warna-warni (neo-green/neo-purple/neo-yellow bergantian).
+        4. **So What?:** Kartu `bg-neo-purple` dengan teks putih.
+        5. **Kesimpulan:** Kartu `bg-neo-green` dengan teks hitam.
     * **Citation & Bibliography Generator (Two-Step):**
-        * **Quick Format (Local):** Formatter instan tanpa API call — tab In-Text/Bibliography dengan dropdown style.
         * **AI Reference Generator (On-Demand):** Dropdown style + tombol "Generate Reference". Mengirim JSON ke Gemini, hasilnya disimpan permanen di database.
         * **Conditional Rendering:** Jika belum ada output → tombol "⚡ Generate". Jika sudah ada → tampilkan hasil + tombol "🔄 Regenerate".
-    * **Loading States:** Skeleton loader saat analisis berjalan, spinner animasi saat generate reference.
-    * **Error Handling:** State gagal dengan tombol retry.
+    * **Per-Article Chat:** Panel chat di bawah citation. User bisa bertanya tentang isi dokumen. AI menjawab berdasarkan `analysis_results` sebagai konteks. Riwayat chat tersimpan permanen di database.
+    * **Loading States:** Skeleton loader saat analisis berjalan, spinner animasi saat generate reference/chat.
+    * **Case-Insensitive Mapping:** Kunci JSON dari AI di-mapping ke kolom tabel secara case-insensitive dan mendukung format nested (legacy) maupun flat (baru).
+
+### **Halaman 6: Ask AI — Global Research Assistant**
+
+* **Route:** `/library/ask-ai`
+* **Fitur:**
+    * **Fullscreen Chat UI:** Tema `neo-green`, layout chat dengan header + area pesan scrollable + input bar.
+    * **Keyword RAG (Retrieval):** Saat user bertanya, sistem mencari 3 artikel paling relevan berdasarkan kecocokan keywords/title/analysis_results.
+    * **Context Injection:** Ringkasan (title, author, so_what, abstract, keywords) dari 3 artikel dikirim ke Gemini sebagai konteks.
+    * **Source Attribution:** AI wajib menyebutkan judul artikel yang dijadikan referensi dalam jawaban.
+    * **Persistensi:** Semua chat global disimpan di `chat_histories` dengan `article_id = null`.
+    * **Empty State:** Contoh pertanyaan sebagai inspirasi user.
 
 ---
 
@@ -110,9 +120,15 @@
     * `analysis_results` (JSONB, nullable — hasil lengkap ekstraksi AI)
     * `citation_output` (TEXT, nullable — hasil in-text citation dari AI Pass 2)
     * `bibliography_output` (TEXT, nullable — hasil bibliography dari AI Pass 2)
+    * `keywords` (JSONB, nullable — array 5 kata kunci dari AI)
     * `created_at`, `updated_at`
-* **`chat_histories`** (Fase lanjutan):
-    * `id`, `user_id`, `article_id` (null jika global), `message`, `sender` (user/ai).
+* **`chat_histories`:**
+    * `id`, `user_id` (FK), `article_id` (FK nullable — null untuk global chat)
+    * `message` (TEXT — pertanyaan user)
+    * `response` (TEXT — jawaban AI)
+    * `metadata` (JSONB — model, sources, dll)
+    * `created_at`, `updated_at`
+    * Index composite: `[user_id, article_id]`
 
 ---
 
@@ -122,22 +138,28 @@
 2. **Auth:** User masuk menggunakan akun Google atau form standar.
 3. **Setup:** User mendapati template "Article" sudah tersedia secara default. User bisa langsung upload atau membuat template custom tambahan.
 4. **Upload:** User mengunggah file PDF/DOCX, memilih jenis KTI (misal: "Article").
-5. **AI Pass 1 (Otomatis):** Laravel Queue mengirim file ke Gemini 3 Flash. AI mengekstrak 8 poin informasi (untuk Article) atau 3+n poin (untuk custom). Hasil disimpan ke `analysis_results` (JSONB). Kolom `title`, `author`, `year` terisi otomatis dari hasil ekstraksi.
-6. **Review:** User masuk ke halaman detail, membaca dokumen asli di kiri, dan melihat tabel hasil analisis yang sudah terisi di kanan.
-7. **Generate (On-Demand):** User memilih format sitasi (APA/MLA/IEEE/Harvard) dan klik "Generate Reference".
-8. **AI Pass 2:** Sistem mengirimkan data JSON (bukan file PDF) ke Gemini. AI memformat data menjadi in-text citation dan bibliography. Hasilnya disimpan permanen ke `citation_output` dan `bibliography_output`.
-9. **Output:** User menyalin (copy) hasil sitasi/bibliografi untuk tugas mereka. Jika ingin ganti style, klik "Regenerate".
+5. **AI Pass 1 (Otomatis):** Laravel Queue mengirim file ke Gemini 3 Flash. AI mengekstrak data sesuai kolom template + abstract + so_what + conclusion + 5 keywords. Hasil disimpan ke `analysis_results` (JSONB). Kolom `title`, `author`, `year`, `keywords` terisi otomatis.
+6. **Review:** User masuk ke halaman detail. Sisi kiri: PDF viewer. Sisi kanan: Abstrak → Tabel Analisis → Keywords → So What → Kesimpulan.
+7. **Generate (On-Demand):** User memilih format sitasi (APA/MLA/IEEE/Harvard) dan klik "Generate Reference". AI memformat data JSON menjadi citation & bibliography. Hasilnya disimpan permanen.
+8. **Chat Per-Artikel:** User bertanya tentang isi dokumen via chat panel. AI menjawab berdasarkan analysis_results. Riwayat tersimpan.
+9. **Smart Search:** Di dashboard, user mencari artikel. Sistem mencari di title, author, keywords, dan analysis_results dengan ranking (keyword match prioritas tertinggi).
+10. **Global Chat:** User klik tombol floating 🤖 → halaman Ask AI. Sistem mencari 3 artikel relevan berdasarkan keyword matching, kirim konteksnya ke AI, AI menjawab dengan menyebutkan sumber.
 
 ---
 
 ## **7. PENANGANAN STABILITAS & RATE LIMIT**
 
-* **HTTP Timeout:** 300 detik (5 menit) untuk `GeminiService::analyzeDocument()` agar dokumen panjang tidak timeout.
-* **Job Timeout:** `$timeout = 300` pada `AnalyzeArticleJob` agar sinkron dengan HTTP timeout.
-* **Exponential Backoff:** Jika API Gemini mengembalikan error 429 (Too Many Requests), job akan menunggu secara bertahap (60 detik, lalu 120 detik) sebelum retry. Maksimal 3 kali percobaan.
-* **Model AI:** Gemini 3 Flash-preview (model ringan dengan limit lebih besar untuk free tier).
-* **Visual Feedback:** User melihat status "AI LAGI MEMBEDAH ISI FILE..." dengan skeleton loader, bukan error/crash. Polling setiap 3 detik untuk update status.
-* **File Cleanup:** File yang diunggah ke Gemini API dihapus otomatis setelah analisis selesai (di blok `finally`).
+* **HTTP Timeout:** 300 detik (5 menit) untuk `GeminiService::analyzeDocument()`.
+* **Job Timeout:** `$timeout = 300` pada `AnalyzeArticleJob`.
+* **Chat Timeout:** 60 detik untuk chat dan reference generation.
+* **Exponential Backoff:** Jika API Gemini mengembalikan error 429, job menunggu 60 detik lalu 120 detik. Maksimal 3 percobaan.
+* **Model AI:**
+    * Analisis dokumen: `gemini-3-flash-preview`
+    * Chat per-artikel: `gemini-2.5-flash`
+    * Global chat: `gemini-2.0-flash`
+    * Reference generation: `gemini-3-flash-preview`
+* **Visual Feedback:** Skeleton loader + polling 3 detik saat analisis. Typing indicator saat chat.
+* **File Cleanup:** File dihapus dari Gemini API setelah analisis selesai.
 
 ---
 
@@ -149,26 +171,32 @@
 * **Proses:**
     1. Upload file ke Gemini File API.
     2. Tunggu 10 detik (file processing di server Google).
-    3. Kirim prompt analisis dengan kolom template + universal fields.
+    3. Kirim prompt flat (tanpa kategori) — hanya kunci JSON yang diinginkan.
     4. Parse JSON response.
-    5. Simpan ke `analysis_results`, extract `title`/`author`/`year` ke kolom dedicated.
-* **Prompt Logic:**
-    * Jika KTI type = "Article": Prompt spesifik untuk 8 poin (5 template + 3 universal).
-    * Jika KTI type lainnya: Prompt generik (n template columns + 3 universal).
-    * Metadata (`title`, `author`, `year`) selalu diekstrak untuk semua tipe.
+    5. Simpan ke `analysis_results`. Extract `title`/`author`/`year`/`keywords` ke kolom dedicated.
+* **Prompt Output (Article):** `{'Judul', 'Penulis', 'Jurnal Publikasi', 'Seri Jurnal', 'Link DOI', 'abstract', 'so_what', 'conclusion', 'keywords'}`
+* **Prompt Output (Custom):** `{kolom template..., 'abstract', 'so_what', 'conclusion', 'keywords'}`
 
-### **Tahap 2: Reference Generation (On-Demand saat User Klik)**
+### **Tahap 2: Reference Generation (On-Demand)**
 
-* **Trigger:** User klik tombol "Generate Reference" di halaman detail.
-* **Proses:**
-    1. Ambil `analysis_results` JSON dari database (tidak perlu upload file lagi).
-    2. Kirim ke Gemini dengan prompt formatting sesuai style yang dipilih.
-    3. Parse response JSON (`{citation, bibliography}`).
-    4. Simpan ke `citation_output` dan `bibliography_output`.
-* **Keuntungan:** Cepat (tidak perlu upload file), hemat quota API, bisa di-regenerate kapan saja.
+* **Trigger:** User klik tombol "Generate Reference".
+* **Proses:** Kirim `analysis_results` JSON ke Gemini → format sesuai style → simpan ke `citation_output` dan `bibliography_output`.
+
+---
+
+## **9. SMART SEARCH (KEYWORD-BASED)**
+
+* **Pendekatan:** Keyword-based search menggunakan PostgreSQL JSONB ILIKE queries (bukan vector/pgvector).
+* **Kolom yang dicari:** `title`, `author`, `file_name`, `keywords::text`, `analysis_results::text`.
+* **Ranking:**
+    * Priority 0: Cocok di `keywords`
+    * Priority 1: Cocok di `title`
+    * Priority 2: Cocok di `author`
+    * Priority 3: Cocok di `analysis_results`
+* **UI:** Search bar dengan badge "⚡ Smart Search", live debounce 300ms, counter hasil.
 
 ---
 
 **Instruksi untuk Pengembang:**
 
-> *"Gunakan PRD ini sebagai panduan tunggal. Implementasikan gaya Neubrutalism secara ketat pada setiap komponen Tailwind CSS. Gunakan database PostgreSQL dengan skema JSONB untuk fleksibilitas template. Two-step AI processing memisahkan analisis dokumen (berat, otomatis) dari formatting sitasi (ringan, on-demand). Pastikan timeout 300 detik dan exponential backoff untuk stabilitas free tier."*
+> *"Gunakan PRD ini sebagai panduan tunggal. Implementasikan gaya Neubrutalism secara ketat. Gunakan PostgreSQL JSONB untuk fleksibilitas template dan keyword search. Two-step AI processing memisahkan analisis dokumen (berat, otomatis) dari formatting sitasi (ringan, on-demand). Pastikan timeout 300 detik dan exponential backoff untuk stabilitas free tier. Prompt AI harus flat tanpa kategori — hanya kunci JSON yang diinginkan."*
