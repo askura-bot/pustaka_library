@@ -11,13 +11,26 @@ new class extends Component {
     public string $password = '';
 
     /**
+     * Check if the current user is an OAuth-only user (no local password).
+     */
+    public function isOAuthUser(): bool
+    {
+        $user = Auth::user();
+
+        return $user->google_id && empty($user->password);
+    }
+
+    /**
      * Delete the currently authenticated user.
      */
     public function deleteUser(Logout $logout): void
     {
-        $this->validate([
-            'password' => $this->currentPasswordRules(),
-        ]);
+        // OAuth users don't need password confirmation
+        if (! $this->isOAuthUser()) {
+            $this->validate([
+                'password' => $this->currentPasswordRules(),
+            ]);
+        }
 
         tap(Auth::user(), $logout(...))->delete();
 
@@ -31,11 +44,16 @@ new class extends Component {
             <flux:heading size="lg">{{ __('Are you sure you want to delete your account?') }}</flux:heading>
 
             <flux:subheading>
-                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted.') }}
+                @if(! $this->isOAuthUser())
+                    {{ __('Please enter your password to confirm you would like to permanently delete your account.') }}
+                @endif
             </flux:subheading>
         </div>
 
-        <flux:input wire:model="password" :label="__('Password')" type="password" viewable />
+        @if(! $this->isOAuthUser())
+            <flux:input wire:model="password" :label="__('Password')" type="password" viewable />
+        @endif
 
         <div class="flex justify-end space-x-2 rtl:space-x-reverse">
             <flux:modal.close>

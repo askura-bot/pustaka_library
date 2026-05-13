@@ -25,6 +25,14 @@ new #[Title('Security settings')] class extends Component {
     public bool $requiresConfirmation;
 
     /**
+     * Check if the current user is an OAuth-only user (no local password).
+     */
+    public function isOAuthUser(): bool
+    {
+        return auth()->user()->google_id && empty(auth()->user()->password);
+    }
+
+    /**
      * Mount the component.
      */
     public function mount(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
@@ -47,10 +55,17 @@ new #[Title('Security settings')] class extends Component {
     public function updatePassword(): void
     {
         try {
-            $validated = $this->validate([
-                'current_password' => $this->currentPasswordRules(),
-                'password' => $this->passwordRules(),
-            ]);
+            if ($this->isOAuthUser()) {
+                // OAuth user setting password for the first time — no current_password needed
+                $validated = $this->validate([
+                    'password' => $this->passwordRules(),
+                ]);
+            } else {
+                $validated = $this->validate([
+                    'current_password' => $this->currentPasswordRules(),
+                    'password' => $this->passwordRules(),
+                ]);
+            }
         } catch (ValidationException $e) {
             $this->reset('current_password', 'password', 'password_confirmation');
 
@@ -91,16 +106,18 @@ new #[Title('Security settings')] class extends Component {
 
     <flux:heading class="sr-only">{{ __('Security settings') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
+    <x-pages::settings.layout :heading="__('Update password')" :subheading="$this->isOAuthUser() ? __('Set a password for your account (you logged in via Google)') : __('Ensure your account is using a long, random password to stay secure')">
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
-            <flux:input
-                wire:model="current_password"
-                :label="__('Current password')"
-                type="password"
-                required
-                autocomplete="current-password"
-                viewable
-            />
+            @if(! $this->isOAuthUser())
+                <flux:input
+                    wire:model="current_password"
+                    :label="__('Current password')"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    viewable
+                />
+            @endif
             <flux:input
                 wire:model="password"
                 :label="__('New password')"
@@ -120,7 +137,7 @@ new #[Title('Security settings')] class extends Component {
 
             <div class="flex items-center gap-4">
                 <flux:button variant="primary" type="submit" data-test="update-password-button">
-                    {{ __('Save') }}
+                    {{ $this->isOAuthUser() ? __('Set password') : __('Save') }}
                 </flux:button>
             </div>
         </form>
