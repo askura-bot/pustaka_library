@@ -58,6 +58,13 @@ new #[Title('Security settings')] class extends Component {
     @include('partials.settings-heading')
 
     <x-pages::settings.layout :heading="$this->isOAuthUser() ? __('Set Password') : __('Update Password')" :subheading="$this->isOAuthUser() ? __('Set a password for your account (you logged in via Google)') : __('Ensure your account is using a long, random password to stay secure')">
+
+        @if(session('status'))
+            <div class="bg-neo-yellow neo-border p-4 mb-6 font-bold text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                ✨ {{ session('status') }}
+            </div>
+        @endif
+
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
             @if(! $this->isOAuthUser())
                 <flux:input

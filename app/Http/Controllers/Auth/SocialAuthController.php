@@ -49,6 +49,12 @@ class SocialAuthController extends Controller
 
             Auth::login($user, true);
 
+            // Jika user baru (belum punya password), redirect ke set password
+            if (empty($user->password)) {
+                return redirect()->route('security.edit')
+                    ->with('status', 'Selamat datang! Silakan set password untuk akunmu.');
+            }
+
             return redirect()->intended(route('dashboard', absolute: false));
         } catch (\Exception $e) {
             return redirect()->route('login')->with('status', 'Gagal login dengan Google. Silakan coba lagi.');
