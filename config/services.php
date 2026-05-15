@@ -46,7 +46,8 @@ return [
         'model_analysis' => env('GEMINI_MODEL_ANALYSIS', 'gemini-3-flash-preview'),
         'model_reference' => env('GEMINI_MODEL_REFERENCE', 'gemini-3-flash-preview'),
         'model_chat' => env('GEMINI_MODEL_CHAT', 'gemini-2.5-flash'),
-        'model_global_chat' => env('GEMINI_MODEL_GLOBAL_CHAT', 'gemini-2.0-flash'),
+        'model_global_chat' => env('GEMINI_MODEL_GLOBAL_CHAT', 'gemini-2.5-flash'),
+        'model_folder_chat' => env('GEMINI_MODEL_FOLDER_CHAT', 'gemini-2.5-flash'),
     ],
 
 ];

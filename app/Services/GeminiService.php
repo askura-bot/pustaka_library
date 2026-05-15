@@ -19,13 +19,16 @@ class GeminiService
 
     protected string $modelGlobalChat;
 
+    protected string $modelFolderChat;
+
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key');
         $this->modelAnalysis = config('services.gemini.model_analysis', 'gemini-3-flash-preview');
         $this->modelReference = config('services.gemini.model_reference', 'gemini-3-flash-preview');
         $this->modelChat = config('services.gemini.model_chat', 'gemini-2.5-flash');
-        $this->modelGlobalChat = config('services.gemini.model_global_chat', 'gemini-2.0-flash');
+        $this->modelGlobalChat = config('services.gemini.model_global_chat', 'gemini-2.5-flash');
+        $this->modelFolderChat = config('services.gemini.model_folder_chat', 'gemini-2.5-flash');
     }
 
     /**
@@ -375,6 +378,61 @@ class GeminiService
 
         if ($response->failed()) {
             Log::error('Gemini Global Chat Error: '.$response->body());
+            throw new \Exception('Gagal mendapatkan respons dari AI.');
+        }
+
+        $data = $response->json();
+
+        return $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Maaf, saya tidak bisa menjawab saat ini.';
+    }
+
+    /**
+     * Chat with Gemini using a folder's cached context.
+     * Uses the dedicated folder chat model from config.
+     */
+    public function folderChat(string $message, string $contextText, string $folderName, array $chatHistory = []): string
+    {
+        $model = $this->modelFolderChat ?? config('services.gemini.model_folder_chat', 'gemini-2.5-flash');
+        $url = "{$this->baseUrl}/models/{$model}:generateContent?key={$this->apiKey}";
+
+        $contents = [];
+
+        $systemPrompt = "Kamu adalah asisten riset akademik untuk folder \"{$folderName}\". ".
+                        "Berikut adalah ringkasan dari semua artikel di dalam folder ini:\n\n".
+                        "{$contextText}\n\n".
+                        "Aturan:\n".
+                        "- Jawab dalam Bahasa Indonesia yang mudah dipahami.\n".
+                        "- Sebutkan judul artikel yang kamu jadikan referensi.\n".
+                        "- Jika informasi tidak tersedia, katakan dengan jujur.\n".
+                        '- Berikan jawaban yang informatif dan terstruktur.';
+
+        $contents[] = ['role' => 'user', 'parts' => [['text' => $systemPrompt]]];
+        $contents[] = ['role' => 'model', 'parts' => [['text' => "Baik, saya siap membantu! Saya akan menjawab berdasarkan artikel-artikel di folder \"{$folderName}\". Silakan tanya!"]]];
+
+        $recentHistory = array_slice($chatHistory, -10);
+        foreach ($recentHistory as $chat) {
+            $contents[] = ['role' => 'user', 'parts' => [['text' => $chat['message']]]];
+            $contents[] = ['role' => 'model', 'parts' => [['text' => $chat['response']]]];
+        }
+
+        $contents[] = ['role' => 'user', 'parts' => [['text' => $message]]];
+
+        $payload = [
+            'contents' => $contents,
+            'generationConfig' => [
+                'temperature' => 0.7,
+                'maxOutputTokens' => 2048,
+            ],
+        ];
+
+        $response = Http::timeout(60)->post($url, $payload);
+
+        if ($response->status() === 429) {
+            throw new \Exception('RATE_LIMIT_EXCEEDED');
+        }
+
+        if ($response->failed()) {
+            Log::error('Gemini Folder Chat Error: '.$response->body());
             throw new \Exception('Gagal mendapatkan respons dari AI.');
         }
 

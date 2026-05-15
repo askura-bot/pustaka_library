@@ -62,7 +62,7 @@
                             <button wire:click="openFolderModal({{ $folder->id }})" class="text-xs font-bold bg-neo-yellow border-2 border-black px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
                                 ✏️ Edit
                             </button>
-                            <button wire:click="deleteFolder({{ $folder->id }})" wire:confirm="Hapus folder ini beserta semua artikel di dalamnya? File dan data analisis akan dihapus permanen." class="text-xs font-bold bg-red-500 text-white border-2 border-black px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                            <button wire:click="deleteFolder({{ $folder->id }})" wire:confirm="Hapus folder ini? Artikel di dalamnya tetap aman di Dashboard." class="text-xs font-bold bg-red-500 text-white border-2 border-black px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
                                 🗑️
                             </button>
                         </div>
@@ -141,6 +141,13 @@
                                         </span>
                                     @endforeach
                                 </div>
+                            @endif
+
+                            {{-- Not Linked Badge --}}
+                            @if($article->folders->isEmpty())
+                                <span class="inline-block bg-zinc-200 text-zinc-600 text-[10px] font-bold px-1.5 py-0.5 border-2 border-zinc-400 mt-2">
+                                    📂 not linked folder
+                                </span>
                             @endif
                         </div>
                     </a>
@@ -278,7 +285,19 @@
             </div>
             
             <h3 class="text-3xl font-black uppercase mb-3">Hapus Dokumen?</h3>
-            <p class="text-zinc-600 font-medium mb-8">Tindakan ini tidak bisa dibatalkan. File dan hasil analisis akan dihapus secara permanen.</p>
+            <p class="text-zinc-600 font-medium mb-4">Tindakan ini tidak bisa dibatalkan. File dan hasil analisis akan dihapus secara permanen.</p>
+
+            @if(count($articleFolderNames) > 0)
+                <div class="bg-neo-yellow neo-border p-3 mb-6 text-left">
+                    <p class="font-bold text-sm mb-1">⚠️ Artikel ini tertaut di folder:</p>
+                    <div class="flex flex-wrap gap-1">
+                        @foreach($articleFolderNames as $fname)
+                            <span class="bg-neo-purple text-white text-xs font-bold px-2 py-0.5 border-2 border-black">{{ $fname }}</span>
+                        @endforeach
+                    </div>
+                    <p class="text-xs text-zinc-700 mt-2 font-medium">Menghapus dari sini akan menghapusnya secara permanen dari semua folder tersebut.</p>
+                </div>
+            @endif
             
             <div class="flex flex-col sm:flex-row gap-4">
                 <button wire:click="cancelDelete" class="neo-btn bg-zinc-200 text-black flex-1">

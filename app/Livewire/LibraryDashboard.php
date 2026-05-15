@@ -31,6 +31,9 @@ class LibraryDashboard extends Component
 
     public ?int $articleToDelete = null;
 
+    /** @var array<int, string> */
+    public array $articleFolderNames = [];
+
     // Folder properties
     public bool $showFolderModal = false;
 
@@ -42,7 +45,7 @@ class LibraryDashboard extends Component
 
     public function getArticlesProperty()
     {
-        $query = Auth::user()->articles()->with('ktiType')->latest();
+        $query = Auth::user()->articles()->with(['ktiType', 'folders'])->latest();
 
         if (trim($this->search) !== '') {
             $query = $this->applySmartSearch($query, trim($this->search));
@@ -133,8 +136,9 @@ class LibraryDashboard extends Component
 
     public function confirmDelete(int $id): void
     {
-        $article = Article::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        $article = Article::where('id', $id)->where('user_id', Auth::id())->with('folders')->firstOrFail();
         $this->articleToDelete = $article->id;
+        $this->articleFolderNames = $article->folders->pluck('name')->toArray();
         $this->showDeleteModal = true;
     }
 
@@ -153,6 +157,7 @@ class LibraryDashboard extends Component
 
             $this->showDeleteModal = false;
             $this->articleToDelete = null;
+            $this->articleFolderNames = [];
         }
     }
 
@@ -160,6 +165,7 @@ class LibraryDashboard extends Component
     {
         $this->showDeleteModal = false;
         $this->articleToDelete = null;
+        $this->articleFolderNames = [];
     }
 
     // ===== FOLDER MANAGEMENT =====
@@ -214,20 +220,9 @@ class LibraryDashboard extends Component
     {
         $folder = Folder::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
-        // Delete all articles in this folder (files + DB records)
-        $articles = $folder->articles()->get();
-        foreach ($articles as $article) {
-            if (Storage::disk('local')->exists($article->file_path)) {
-                Storage::disk('local')->delete($article->file_path);
-            }
-            $article->delete();
-        }
-
-        // Chat histories with folder_id will be nulled via nullOnDelete FK,
-        // but we want full cleanup — delete them explicitly
-        $folder->chatHistories()->delete();
-
-        // Delete the folder (pivot records cascade automatically)
+        // Only delete pivot records and chat histories — articles stay intact
+        // Chat histories cascade automatically via FK (cascadeOnDelete)
+        // Pivot records cascade automatically via FK (cascadeOnDelete on article_folder)
         $folder->delete();
     }
 

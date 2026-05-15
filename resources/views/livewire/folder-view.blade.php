@@ -46,8 +46,8 @@
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                             </div>
                             <object>
-                                <button wire:click.prevent="removeArticle({{ $article->id }})" class="bg-red-500 text-white border-2 border-black p-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer" title="Keluarkan dari folder">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                <button wire:click.prevent="removeArticle({{ $article->id }})" wire:confirm="Lepaskan artikel ini dari folder? Artikel tetap ada di Dashboard." class="bg-zinc-200 text-black border-2 border-black px-2 py-1 text-[10px] font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all cursor-pointer" title="Lepaskan dari folder">
+                                    🔗‍💥 Lepas
                                 </button>
                             </object>
                         </div>

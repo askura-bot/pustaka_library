@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Jobs\AnalyzeArticleJob;
+use App\Jobs\SyncFolderContextJob;
 use App\Models\Article;
 use App\Models\ChatHistory;
 use App\Models\Folder;
@@ -134,6 +135,9 @@ class FolderView extends Component
         // Dispatch AI analysis
         AnalyzeArticleJob::dispatch($article);
 
+        // Sync folder context after article is added
+        SyncFolderContextJob::dispatch($this->folder);
+
         $this->reset(['file', 'selectedKtiTypeId']);
         $this->showUploadModal = false;
         $this->folder->refresh();
@@ -151,6 +155,9 @@ class FolderView extends Component
 
         $this->folder->articles()->syncWithoutDetaching([$article->id]);
         $this->folder->refresh();
+
+        // Sync folder context in background
+        SyncFolderContextJob::dispatch($this->folder);
     }
 
     /**
@@ -160,6 +167,11 @@ class FolderView extends Component
     {
         $this->folder->articles()->detach($articleId);
         $this->folder->refresh();
+
+        // Sync folder context in background
+        SyncFolderContextJob::dispatch($this->folder);
+
+        $this->dispatch('notify', message: 'Artikel berhasil dikeluarkan dari folder ini.');
     }
 
     // ===== FOLDER CHAT =====
@@ -202,8 +214,14 @@ class FolderView extends Component
                 ->values()
                 ->toArray();
 
-            // Send to Gemini with folder context (reuse globalChat with folder articles as context)
-            $response = $geminiService->globalChat($message, $folderContext, $previousChats);
+            // Send to Gemini with folder-specific model and cached context
+            $contextText = $this->folder->context_cache ?: $brainService->buildSummaryText($this->folder);
+            $response = $geminiService->folderChat(
+                $message,
+                $contextText,
+                $this->folder->name,
+                $previousChats
+            );
 
             // Save to database with folder_id
             ChatHistory::create([
@@ -213,7 +231,7 @@ class FolderView extends Component
                 'message' => $message,
                 'response' => $response,
                 'metadata' => [
-                    'model' => config('services.gemini.model_chat'),
+                    'model' => config('services.gemini.model_folder_chat'),
                     'folder_name' => $this->folder->name,
                     'articles_count' => count($folderContext),
                 ],
