@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Jobs\AnalyzeArticleJob;
 use App\Models\Article;
+use App\Models\Folder;
 use App\Models\KtiType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -29,6 +30,15 @@ class LibraryDashboard extends Component
     public bool $showDeleteModal = false;
 
     public ?int $articleToDelete = null;
+
+    // Folder properties
+    public bool $showFolderModal = false;
+
+    public ?int $editingFolderId = null;
+
+    public string $folderName = '';
+
+    public string $folderDescription = '';
 
     public function getArticlesProperty()
     {
@@ -152,11 +162,81 @@ class LibraryDashboard extends Component
         $this->articleToDelete = null;
     }
 
+    // ===== FOLDER MANAGEMENT =====
+
+    public function getFoldersProperty()
+    {
+        return Auth::user()->folders()->withCount('articles')->latest()->get();
+    }
+
+    public function openFolderModal(?int $folderId = null): void
+    {
+        if ($folderId) {
+            $folder = Folder::where('id', $folderId)->where('user_id', Auth::id())->firstOrFail();
+            $this->editingFolderId = $folder->id;
+            $this->folderName = $folder->name;
+            $this->folderDescription = $folder->description ?? '';
+        } else {
+            $this->editingFolderId = null;
+            $this->folderName = '';
+            $this->folderDescription = '';
+        }
+        $this->showFolderModal = true;
+    }
+
+    public function saveFolder(): void
+    {
+        $this->validate([
+            'folderName' => 'required|string|max:255',
+            'folderDescription' => 'nullable|string|max:500',
+        ], [
+            'folderName.required' => 'Nama folder tidak boleh kosong.',
+        ]);
+
+        if ($this->editingFolderId) {
+            $folder = Folder::where('id', $this->editingFolderId)->where('user_id', Auth::id())->firstOrFail();
+            $folder->update([
+                'name' => $this->folderName,
+                'description' => $this->folderDescription ?: null,
+            ]);
+        } else {
+            Auth::user()->folders()->create([
+                'name' => $this->folderName,
+                'description' => $this->folderDescription ?: null,
+            ]);
+        }
+
+        $this->showFolderModal = false;
+        $this->reset(['folderName', 'folderDescription', 'editingFolderId']);
+    }
+
+    public function deleteFolder(int $id): void
+    {
+        $folder = Folder::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        // Delete all articles in this folder (files + DB records)
+        $articles = $folder->articles()->get();
+        foreach ($articles as $article) {
+            if (Storage::disk('local')->exists($article->file_path)) {
+                Storage::disk('local')->delete($article->file_path);
+            }
+            $article->delete();
+        }
+
+        // Chat histories with folder_id will be nulled via nullOnDelete FK,
+        // but we want full cleanup — delete them explicitly
+        $folder->chatHistories()->delete();
+
+        // Delete the folder (pivot records cascade automatically)
+        $folder->delete();
+    }
+
     public function render()
     {
         return view('livewire.library-dashboard', [
             'articles' => $this->articles,
             'ktiTypes' => $this->ktiTypes,
+            'folders' => $this->folders,
         ]);
     }
 }

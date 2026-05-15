@@ -32,6 +32,48 @@
         </div>
     </div>
 
+    <!-- Folders Section -->
+    <div class="mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-2xl font-black uppercase tracking-tight">📁 Folder</h3>
+            <button wire:click="openFolderModal" class="neo-btn neo-btn-lilac text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                + Folder Baru
+            </button>
+        </div>
+
+        @if(count($folders) > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                @foreach($folders as $folder)
+                    <div class="neo-border bg-neo-lilac p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+                        <a href="{{ route('library.folder', $folder) }}" class="block">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h4 class="font-black text-lg leading-tight">{{ $folder->name }}</h4>
+                                    @if($folder->description)
+                                        <p class="text-xs text-zinc-600 mt-1">{{ $folder->description }}</p>
+                                    @endif
+                                </div>
+                                <span class="bg-neo-purple text-white text-xs font-bold px-2 py-1 border-2 border-black shrink-0">
+                                    {{ $folder->articles_count }}
+                                </span>
+                            </div>
+                        </a>
+                        <div class="flex gap-2 mt-3">
+                            <button wire:click="openFolderModal({{ $folder->id }})" class="text-xs font-bold bg-neo-yellow border-2 border-black px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                                ✏️ Edit
+                            </button>
+                            <button wire:click="deleteFolder({{ $folder->id }})" wire:confirm="Hapus folder ini beserta semua artikel di dalamnya? File dan data analisis akan dihapus permanen." class="text-xs font-bold bg-red-500 text-white border-2 border-black px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-zinc-400 font-medium text-sm">Belum ada folder. Buat folder untuk mengelompokkan artikelmu.</p>
+        @endif
+    </div>
+
     <!-- Library Grid -->
     @if(count($articles) > 0)
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" wire:poll.5s>
@@ -248,4 +290,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Folder Create/Edit Modal -->
+    @if($showFolderModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+             wire:click.self="$set('showFolderModal', false)">
+            <div class="bg-white neo-border p-8 max-w-md w-full shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+                <div class="flex justify-between items-start mb-6">
+                    <h3 class="text-2xl font-black uppercase">{{ $editingFolderId ? 'Edit Folder' : 'Folder Baru' }}</h3>
+                    <button wire:click="$set('showFolderModal', false)" class="bg-white text-black border-4 border-black p-1 hover:bg-black hover:text-white transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <form wire:submit="saveFolder" class="flex flex-col gap-4">
+                    <div>
+                        <label class="font-bold text-sm block mb-2">Nama Folder</label>
+                        <input wire:model="folderName" type="text" placeholder="Misal: Jurnal NLP" class="neo-input" required />
+                        @error('folderName') <span class="text-red-500 font-bold text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="font-bold text-sm block mb-2">Deskripsi (opsional)</label>
+                        <input wire:model="folderDescription" type="text" placeholder="Deskripsi singkat..." class="neo-input" />
+                    </div>
+                    <button type="submit" class="neo-btn neo-btn-purple w-full mt-2">
+                        {{ $editingFolderId ? 'Update' : 'Buat Folder' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    @endif
 </div>

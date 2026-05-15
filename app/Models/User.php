@@ -92,4 +92,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(ChatHistory::class);
     }
+
+    /**
+     * Get the folders for the user.
+     */
+    public function folders(): HasMany
+    {
+        return $this->hasMany(Folder::class);
+    }
 }

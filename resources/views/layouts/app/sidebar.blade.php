@@ -112,9 +112,9 @@
             {{ $slot }}
         </main>
 
-        {{-- Global Ask AI Sticky Button (FAB) --}}
+        {{-- Global Ask AI Sticky Button (FAB) — hidden on article detail, ask-ai, and folder pages --}}
         @auth
-            @if(!request()->routeIs('library.ask-ai') && !request()->routeIs('library.article'))
+            @if(!request()->routeIs('library.ask-ai') && !request()->routeIs('library.article') && !request()->routeIs('library.folder'))
                 <a href="{{ route('library.ask-ai') }}"
                    wire:navigate
                    class="fixed bottom-6 right-6 z-50 bg-neo-green text-black neo-border p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all group"

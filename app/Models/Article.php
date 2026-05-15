@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['user_id', 'kti_type_id', 'file_path', 'file_name', 'file_type', 'title', 'author', 'year', 'status', 'analysis_results', 'citation_output', 'bibliography_output', 'keywords'])]
@@ -45,5 +46,13 @@ class Article extends Model
     public function chatHistories(): HasMany
     {
         return $this->hasMany(ChatHistory::class);
+    }
+
+    /**
+     * Get the folders this article belongs to (many-to-many).
+     */
+    public function folders(): BelongsToMany
+    {
+        return $this->belongsToMany(Folder::class, 'article_folder')->withTimestamps();
     }
 }
