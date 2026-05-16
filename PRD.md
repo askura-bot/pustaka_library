@@ -301,3 +301,132 @@ Flux UI components di-override agar sesuai Neubrutalism:
 **Instruksi untuk Pengembang:**
 
 > *"Gunakan PRD ini sebagai panduan tunggal. Implementasikan gaya Neubrutalism secara ketat — Light Mode Only dengan palet vibran (Purple, Lilac, Yellow, Green, Off-White). Gunakan Top Navigation (bukan sidebar). Model AI dikonfigurasi via .env (termasuk folder chat). Gunakan PostgreSQL JSONB untuk fleksibilitas template dan keyword search. Two-step AI processing memisahkan analisis dokumen (berat, otomatis) dari formatting sitasi (ringan, on-demand). Folder system menggunakan many-to-many pivot — hapus folder tidak hapus artikel. Folder chatbot menggunakan cached context yang di-sync otomatis. Pastikan timeout 300 detik dan exponential backoff. Prompt AI harus flat tanpa kategori. User Google di-redirect ke Set Password setelah login pertama. Timezone: Asia/Jakarta (WIB)."*
+
+---
+
+## **13. ENTITY RELATIONSHIP DIAGRAM (ERD)**
+
+### **Diagram Tekstual**
+
+```
+┌──────────────┐       ┌──────────────┐       ┌──────────────────┐
+│    users     │       │  kti_types   │       │     folders      │
+├──────────────┤       ├──────────────┤       ├──────────────────┤
+│ id (PK)      │──┐    │ id (PK)      │       │ id (PK)          │
+│ name         │  │    │ user_id (FK) │──┐    │ user_id (FK)     │──┐
+│ email        │  │    │ name         │  │    │ name             │  │
+│ password?    │  │    │ columns      │  │    │ description?     │  │
+│ google_id?   │  │    │ created_at   │  │    │ context_cache?   │  │
+│ avatar?      │  │    │ updated_at   │  │    │ created_at       │  │
+│ created_at   │  │    └──────────────┘  │    │ updated_at       │  │
+│ updated_at   │  │                      │    └──────────────────┘  │
+└──────────────┘  │                      │                          │
+                  │                      │                          │
+    ┌─────────────┼──────────────────────┼──────────────────────────┘
+    │             │                      │
+    │    ┌────────┴──────────────────────┴───────────────┐
+    │    │                 articles                       │
+    │    ├───────────────────────────────────────────────┤
+    │    │ id (PK)                                       │
+    │    │ user_id (FK) ─────────────────────────────────│──→ users.id
+    │    │ kti_type_id (FK) ─────────────────────────────│──→ kti_types.id
+    │    │ file_path, file_name, file_type               │
+    │    │ title?, author?, year?                        │
+    │    │ status (pending/processing/completed/failed)  │
+    │    │ analysis_results (JSONB)?                     │
+    │    │ citation_output (TEXT)?                       │
+    │    │ bibliography_output (TEXT)?                   │
+    │    │ keywords (JSONB)?                             │
+    │    │ created_at, updated_at                        │
+    │    └───────────────────────────────────────────────┘
+    │                          │
+    │                          │ Many-to-Many
+    │                          ▼
+    │    ┌───────────────────────────────────────┐
+    │    │          article_folder (Pivot)        │
+    │    ├───────────────────────────────────────┤
+    │    │ id (PK)                               │
+    │    │ article_id (FK) ──→ articles.id       │ CASCADE
+    │    │ folder_id (FK) ───→ folders.id        │ CASCADE
+    │    │ created_at, updated_at                │
+    │    │ UNIQUE(article_id, folder_id)         │
+    │    └───────────────────────────────────────┘
+    │
+    │    ┌───────────────────────────────────────────────┐
+    │    │              chat_histories                    │
+    │    ├───────────────────────────────────────────────┤
+    │    │ id (PK)                                       │
+    │    │ user_id (FK) ─────────────────────────────────│──→ users.id
+    │    │ article_id (FK, nullable) ────────────────────│──→ articles.id (CASCADE)
+    │    │ folder_id (FK, nullable) ─────────────────────│──→ folders.id (CASCADE)
+    │    │ message (TEXT)                                 │
+    │    │ response (TEXT)                                │
+    │    │ metadata (JSONB)?                              │
+    │    │ created_at, updated_at                         │
+    │    │ INDEX(user_id, article_id)                     │
+    │    └───────────────────────────────────────────────┘
+    │
+    └──→ users.id (semua FK user_id mengarah ke sini)
+```
+
+### **Penjelasan Entitas**
+
+| Entitas | Deskripsi | Jumlah Kolom |
+|---------|-----------|:------------:|
+| **users** | Data pengguna (autentikasi, profil, OAuth) | 7 |
+| **kti_types** | Template jenis KTI dengan kolom analisis dinamis (JSONB) | 5 |
+| **articles** | Dokumen penelitian yang diunggah + hasil analisis AI | 13 |
+| **folders** | Pengelompokan logis artikel + cache konteks AI | 6 |
+| **article_folder** | Tabel pivot many-to-many antara articles dan folders | 5 |
+| **chat_histories** | Riwayat percakapan AI (per-artikel, per-folder, atau global) | 8 |
+
+### **Penjelasan Relasi**
+
+| Relasi | Tipe | Keterangan |
+|--------|------|------------|
+| users → kti_types | One-to-Many | Satu user memiliki banyak template KTI |
+| users → articles | One-to-Many | Satu user memiliki banyak artikel |
+| users → folders | One-to-Many | Satu user memiliki banyak folder |
+| users → chat_histories | One-to-Many | Satu user memiliki banyak riwayat chat |
+| kti_types → articles | One-to-Many | Satu template digunakan oleh banyak artikel |
+| articles ↔ folders | Many-to-Many | Satu artikel bisa di banyak folder, satu folder bisa berisi banyak artikel (via `article_folder`) |
+| articles → chat_histories | One-to-Many | Satu artikel bisa punya banyak riwayat chat (nullable — null berarti global/folder chat) |
+| folders → chat_histories | One-to-Many | Satu folder bisa punya banyak riwayat chat (nullable — null berarti global/article chat) |
+
+### **Aturan Cascade (Foreign Key)**
+
+| FK | On Delete | Penjelasan |
+|----|-----------|------------|
+| `kti_types.user_id` → users | CASCADE | Hapus user → hapus semua template |
+| `articles.user_id` → users | CASCADE | Hapus user → hapus semua artikel |
+| `articles.kti_type_id` → kti_types | CASCADE | Hapus template → hapus artikel terkait |
+| `folders.user_id` → users | CASCADE | Hapus user → hapus semua folder |
+| `article_folder.article_id` → articles | CASCADE | Hapus artikel → hapus dari semua folder |
+| `article_folder.folder_id` → folders | CASCADE | Hapus folder → hapus semua relasi pivot |
+| `chat_histories.user_id` → users | — | Tidak cascade (user jarang dihapus) |
+| `chat_histories.article_id` → articles | CASCADE | Hapus artikel → hapus chat terkait |
+| `chat_histories.folder_id` → folders | CASCADE | Hapus folder → hapus chat folder terkait |
+
+### **Tipe Chat (Berdasarkan Kolom Nullable)**
+
+| article_id | folder_id | Tipe Chat |
+|:----------:|:---------:|-----------|
+| NOT NULL | NULL | Chat per-artikel (konteks: 1 artikel) |
+| NULL | NOT NULL | Chat folder (konteks: semua artikel dalam folder) |
+| NULL | NULL | Chat global (konteks: 3 artikel paling relevan via keyword search) |
+
+### **Kolom JSONB (Fleksibel)**
+
+| Tabel | Kolom | Isi |
+|-------|-------|-----|
+| kti_types | `columns` | Array nama kolom analisis, misal: `["Judul", "Penulis", "Jurnal Publikasi"]` |
+| articles | `analysis_results` | Hasil lengkap ekstraksi AI dalam format key-value, misal: `{"Judul": "...", "abstract": "...", "keywords": [...]}` |
+| articles | `keywords` | Array 5 kata kunci, misal: `["NLP", "klasifikasi", "deep learning", "BERT", "sentimen"]` |
+| chat_histories | `metadata` | Info tambahan chat, misal: `{"model": "gemini-2.5-flash", "folder_name": "...", "sources": [...]}` |
+
+### **Index Database**
+
+| Tabel | Index | Kolom | Tujuan |
+|-------|-------|-------|--------|
+| article_folder | UNIQUE | `[article_id, folder_id]` | Mencegah duplikasi relasi |
+| chat_histories | INDEX | `[user_id, article_id]` | Query cepat riwayat chat per user/artikel |
