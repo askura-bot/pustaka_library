@@ -20,6 +20,7 @@
     * `GEMINI_MODEL_REFERENCE` — Generate citation/bibliography (default: `gemini-3-flash-preview`)
     * `GEMINI_MODEL_CHAT` — Chat per-artikel (default: `gemini-2.5-flash`)
     * `GEMINI_MODEL_GLOBAL_CHAT` — Global chat (default: `gemini-2.5-flash`)
+    * `GEMINI_MODEL_FOLDER_CHAT` — Chat folder (default: `gemini-2.5-flash`)
 * **Pencarian:** Keyword-Based Smart Search (JSONB ILIKE query dengan ranking).
 * **Autentikasi:** Laravel Fortify (Standard Auth) & Laravel Socialite (Google Sign-In).
 * **Background Jobs:** Laravel Queues (Database driver) dengan *Exponential Backoff* dan timeout 300 detik.
@@ -82,13 +83,15 @@
 
 * **Fitur:**
     * **Top Navigation:** Header sticky dengan logo (Vibrant Purple), nav links (Dashboard, Template, Ask AI), user profile + logout.
+    * **Folder Section:** Grid kartu folder (`bg-neo-lilac`) dengan badge jumlah artikel, tombol Edit/Delete. Modal create/edit folder.
     * **Article Grid:** Daftar KTI dengan kartu Neubrutalist berwarna-warni.
+    * **"Not Linked" Badge:** Artikel yang tidak terhubung ke folder mana pun menampilkan badge abu-abu "📂 not linked folder".
     * **Upload Modal:** Dropdown pilih Jenis KTI + Drag & drop file PDF/DOCX (maks 10MB).
     * **Status Indicator:** Badge status per artikel (Proses/Selesai/Gagal) dengan polling otomatis.
     * **Smart Search:** Input field + tombol ikon search (Neubrutalism purple). Pencarian keyword-based. Live debounce 300ms.
     * **Keyword Tags:** 3 kata kunci pertama ditampilkan di setiap kartu artikel.
-    * **Delete File:** Hapus dokumen (sekaligus menghapus file fisik dari storage).
-    * **Global Ask AI (Sticky FAB):** Tombol floating 🤖 di pojok kanan bawah. Tersembunyi di halaman detail artikel dan halaman Ask AI.
+    * **Smart Delete Warning:** Modal konfirmasi hapus menampilkan nama folder terkait: "Artikel ini tertaut di Folder: [A], [B]. Menghapus akan menghapusnya dari semua folder."
+    * **Global Ask AI (Sticky FAB):** Tombol floating 🤖 di pojok kanan bawah. Tersembunyi di halaman detail artikel, Ask AI, dan folder.
 
 ### **Halaman 5: Detail Artikel (Research Lab)**
 
@@ -117,10 +120,22 @@
     * **Keyword RAG (Retrieval):** Saat user bertanya, sistem memecah pertanyaan menjadi kata-kata, lalu mencari 3 artikel paling relevan.
     * **Context Injection:** Ringkasan (title, author, so_what, abstract, keywords) dari 3 artikel dikirim ke Gemini sebagai konteks.
     * **Source Attribution:** AI wajib menyebutkan judul artikel yang dijadikan referensi dalam jawaban.
-    * **Persistensi:** Semua chat global disimpan di `chat_histories` dengan `article_id = null`.
+    * **Persistensi:** Semua chat global disimpan di `chat_histories` dengan `article_id = null` dan `folder_id = null`.
     * **Empty State:** Contoh pertanyaan sebagai inspirasi user.
 
-### **Halaman 7: Settings**
+### **Halaman 7: Folder View**
+
+* **Route:** `/library/folders/{folder}`
+* **Fitur:**
+    * **Folder Info:** Nama folder, deskripsi, jumlah artikel.
+    * **Article Grid:** Daftar artikel dalam folder dengan warna cycling.
+    * **"Lepaskan" Button:** Setiap artikel punya tombol "🔗‍💥 Lepas" yang hanya menghapus relasi pivot (artikel tetap ada di Dashboard).
+    * **Add Existing Article:** Modal untuk menambahkan artikel yang sudah ada ke folder (search + list).
+    * **In-Folder Upload:** Tombol "📄 Upload Baru" — upload langsung ke folder. Artikel otomatis masuk ke folder + dispatch AI analysis.
+    * **Folder Chatbot (Sticky Button):** Tombol 💬 `bg-neo-purple` di pojok kanan bawah. Membuka panel chat floating (380px). AI menjawab berdasarkan konteks semua artikel dalam folder.
+    * **Auto-Sync Context:** Setiap kali artikel ditambah/dilepas, `SyncFolderContextJob` berjalan di background untuk memperbarui `context_cache`.
+
+### **Halaman 8: Settings**
 
 * **Profile:** Update nama dan email. Delete account (Neubrutalism modal — background putih, tombol merah).
 * **Security:** Update password (OAuth user: skip current password, label "Set password"). Flash message setelah login Google pertama kali.
@@ -144,8 +159,18 @@
     * `bibliography_output` (TEXT, nullable — hasil bibliography dari AI Pass 2)
     * `keywords` (JSONB, nullable — array 5 kata kunci dari AI)
     * `created_at`, `updated_at`
+* **`folders`:**
+    * `id`, `user_id` (FK cascade)
+    * `name` (VARCHAR)
+    * `description` (VARCHAR, nullable)
+    * `context_cache` (TEXT, nullable — cached AI context string)
+    * `created_at`, `updated_at`
+* **`article_folder`** (Pivot — Many-to-Many):
+    * `id`, `article_id` (FK cascade), `folder_id` (FK cascade)
+    * `created_at`, `updated_at`
+    * Unique constraint: `[article_id, folder_id]`
 * **`chat_histories`:**
-    * `id`, `user_id` (FK), `article_id` (FK nullable — null untuk global chat)
+    * `id`, `user_id` (FK), `article_id` (FK nullable), `folder_id` (FK nullable — cascade on delete)
     * `message` (TEXT — pertanyaan user)
     * `response` (TEXT — jawaban AI)
     * `metadata` (JSONB — model, sources, dll)
@@ -164,8 +189,10 @@
 6. **Review:** User masuk ke halaman detail. Sisi kiri: PDF viewer. Sisi kanan: Abstrak (lilac) → Tabel Analisis (yellow header) → Keywords (badges) → So What (purple) → Kesimpulan (green).
 7. **Generate (On-Demand):** User memilih format sitasi dan klik "Generate Reference". AI memformat data JSON. Hasilnya disimpan permanen.
 8. **Chat Per-Artikel:** User bertanya tentang isi dokumen via chat panel. AI menjawab berdasarkan analysis_results. Riwayat tersimpan.
-9. **Smart Search:** Di dashboard, user mencari artikel. Sistem mencari di title, author, keywords, dan analysis_results dengan ranking.
-10. **Global Chat:** User klik tombol floating 🤖 → halaman Ask AI. Sistem mencari 3 artikel relevan, kirim konteksnya ke AI, AI menjawab dengan menyebutkan sumber.
+9. **Folder Management:** User membuat folder, menambahkan artikel (existing atau upload baru). Konteks folder di-sync otomatis.
+10. **Folder Chat:** User membuka folder → klik tombol 💬 → chat dengan AI berdasarkan semua artikel dalam folder.
+11. **Smart Search:** Di dashboard, user mencari artikel. Sistem mencari di title, author, keywords, dan analysis_results dengan ranking.
+12. **Global Chat:** User klik tombol floating 🤖 → halaman Ask AI. Sistem mencari 3 artikel relevan, kirim konteksnya ke AI, AI menjawab dengan menyebutkan sumber.
 
 ---
 
@@ -180,6 +207,7 @@
     * `GEMINI_MODEL_REFERENCE` — Generate citation/bibliography
     * `GEMINI_MODEL_CHAT` — Chat per-artikel
     * `GEMINI_MODEL_GLOBAL_CHAT` — Global chat
+    * `GEMINI_MODEL_FOLDER_CHAT` — Chat folder
 * **Visual Feedback:** Skeleton loader + polling 3 detik saat analisis. Typing indicator saat chat.
 * **File Cleanup:** File dihapus dari Gemini API setelah analisis selesai.
 
@@ -219,18 +247,45 @@
 
 ---
 
-## **10. OAUTH & PASSWORD HANDLING**
+## **10. FOLDER SYSTEM**
+
+### **Konsep**
+Folder adalah pengelompokan logis artikel (many-to-many). Satu artikel bisa masuk ke banyak folder. Folder memiliki chatbot AI sendiri yang menjawab berdasarkan konteks semua artikel di dalamnya.
+
+### **Relasi Database**
+* `folders` ↔ `articles` via pivot `article_folder` (many-to-many)
+* `folders` → `chat_histories` (one-to-many, cascade on delete)
+
+### **Deletion Logic**
+* **Hapus Folder:** Hanya menghapus folder + pivot records + chat histories. Artikel tetap ada di Dashboard.
+* **Lepaskan Artikel dari Folder:** Hanya menghapus record pivot. Artikel tetap ada di Dashboard dan folder lain.
+* **Hapus Artikel dari Dashboard:** Menghapus artikel + file fisik + semua pivot records (otomatis hilang dari semua folder).
+
+### **Folder Chatbot**
+* **Model:** `GEMINI_MODEL_FOLDER_CHAT` dari `.env`
+* **Context:** `FolderBrainService` mengumpulkan semua `analysis_results` dari artikel dalam folder → build summary text → cache di `folders.context_cache`
+* **Auto-Sync:** `SyncFolderContextJob` dispatch otomatis saat artikel ditambah/dilepas/diupload ke folder
+* **UI:** Sticky button 💬 `bg-neo-purple` di pojok kanan bawah (hanya di halaman folder). Panel chat floating 380px.
+* **Isolation:** Global FAB tersembunyi di halaman folder. User fokus pada folder chatbot.
+
+### **Dashboard Intelligence**
+* **"Not Linked" Badge:** Artikel tanpa folder menampilkan badge abu-abu.
+* **Smart Delete Warning:** Modal konfirmasi menampilkan nama folder terkait sebelum hapus.
+
+---
+
+## **11. OAUTH & PASSWORD HANDLING**
 
 * **Google Sign-In:** Password disimpan sebagai `null` (bukan random hash).
 * **Set Password Flow:** Setelah login Google pertama kali (password null), user di-redirect ke `/settings/security` dengan flash message untuk set password.
 * **Password Confirmation Bypass:** Middleware `BypassPasswordConfirmForOAuth` auto-confirm untuk user Google yang belum set password.
-* **Security Page:** User Google bisa set password baru tanpa "current password". Label tombol: "Set password". Subheading: "Set a password for your account (you logged in via Google)".
-* **Delete Account:** User Google tidak perlu memasukkan password untuk konfirmasi. Custom Neubrutalism modal (background putih, bukan hitam).
+* **Security Page:** User Google bisa set password baru tanpa "current password". Label tombol: "Set password".
+* **Delete Account:** User Google tidak perlu memasukkan password untuk konfirmasi. Custom Neubrutalism modal (background putih).
 * **Deteksi OAuth User:** `$user->google_id && empty($user->password)`.
 
 ---
 
-## **11. FLUX UI OVERRIDES (CSS)**
+## **12. FLUX UI OVERRIDES (CSS)**
 
 Flux UI components di-override agar sesuai Neubrutalism:
 * **Inputs** (`[data-flux-control]`, `[data-flux-input]`): `border-4! border-black! rounded-none! bg-white! text-black!`
@@ -245,4 +300,4 @@ Flux UI components di-override agar sesuai Neubrutalism:
 
 **Instruksi untuk Pengembang:**
 
-> *"Gunakan PRD ini sebagai panduan tunggal. Implementasikan gaya Neubrutalism secara ketat — Light Mode Only dengan palet vibran (Purple, Lilac, Yellow, Green, Off-White). Gunakan Top Navigation (bukan sidebar). Model AI dikonfigurasi via .env. Gunakan PostgreSQL JSONB untuk fleksibilitas template dan keyword search. Two-step AI processing memisahkan analisis dokumen (berat, otomatis) dari formatting sitasi (ringan, on-demand). Pastikan timeout 300 detik dan exponential backoff. Prompt AI harus flat tanpa kategori. User Google di-redirect ke Set Password setelah login pertama. Timezone: Asia/Jakarta (WIB)."*
+> *"Gunakan PRD ini sebagai panduan tunggal. Implementasikan gaya Neubrutalism secara ketat — Light Mode Only dengan palet vibran (Purple, Lilac, Yellow, Green, Off-White). Gunakan Top Navigation (bukan sidebar). Model AI dikonfigurasi via .env (termasuk folder chat). Gunakan PostgreSQL JSONB untuk fleksibilitas template dan keyword search. Two-step AI processing memisahkan analisis dokumen (berat, otomatis) dari formatting sitasi (ringan, on-demand). Folder system menggunakan many-to-many pivot — hapus folder tidak hapus artikel. Folder chatbot menggunakan cached context yang di-sync otomatis. Pastikan timeout 300 detik dan exponential backoff. Prompt AI harus flat tanpa kategori. User Google di-redirect ke Set Password setelah login pertama. Timezone: Asia/Jakarta (WIB)."*
