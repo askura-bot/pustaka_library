@@ -120,6 +120,12 @@ class GeminiService
         $columnKeys = array_map(fn ($col) => "'{$col}'", $columns);
         $columnsList = implode(', ', $columnKeys);
 
+        $categoryInstruction = "'category' (pilih SATU kategori bidang ilmu yang paling cocok dari daftar berikut: ".
+            "'Sains & Teknologi', 'Kesehatan & Kedokteran', 'Ekonomi, Bisnis & Akuntansi', ".
+            "'Sosial & Humaniora', 'Hukum & Politik', 'Pendidikan & Bahasa', ".
+            "'Pertanian, Lingkungan & Logistik', 'Seni, Desain & Media', 'Multidisiplin / Umum'. ".
+            'WAJIB pilih salah satu dari daftar tersebut, jangan buat kategori baru)';
+
         if ($isArticle) {
             return 'Analisis dokumen jurnal/artikel ilmiah terlampir. '.
                    'Berikan output HANYA dalam format JSON valid dengan kunci-kunci berikut: '.
@@ -127,7 +133,8 @@ class GeminiService
                    "'abstract' (ringkasan isi dokumen dalam Bahasa Indonesia, 2-4 kalimat), ".
                    "'so_what' (esensi atau makna penting penelitian ini — mengapa ini relevan?), ".
                    "'conclusion' (kesimpulan utama dari dokumen dalam Bahasa Indonesia), ".
-                   "'keywords' (array berisi tepat 5 kata kunci campuran Bahasa Indonesia dan Inggris yang menggambarkan isi dokumen). ".
+                   "'keywords' (array berisi tepat 5 kata kunci campuran Bahasa Indonesia dan Inggris yang menggambarkan isi dokumen), ".
+                   "{$categoryInstruction}. ".
                    'Aturan: Isi setiap kunci sesuai data yang ditemukan di dokumen. '.
                    'Untuk judul, nama penulis, nama jurnal, dan DOI gunakan bahasa aslinya. Sisanya dalam Bahasa Indonesia. '.
                    'Jangan tambahkan awalan ```json atau akhiran apapun, berikan JSON mentah saja.';
@@ -139,7 +146,8 @@ class GeminiService
                "'abstract' (ringkasan isi dokumen dalam Bahasa Indonesia, 2-4 kalimat), ".
                "'so_what' (esensi atau makna penting penelitian ini — mengapa ini relevan?), ".
                "'conclusion' (kesimpulan utama dari dokumen dalam Bahasa Indonesia), ".
-               "'keywords' (array berisi tepat 5 kata kunci campuran Bahasa Indonesia dan Inggris yang menggambarkan isi dokumen). ".
+               "'keywords' (array berisi tepat 5 kata kunci campuran Bahasa Indonesia dan Inggris yang menggambarkan isi dokumen), ".
+               "{$categoryInstruction}. ".
                'Aturan: Isi setiap kunci sesuai data yang ditemukan di dokumen. '.
                'Gunakan Bahasa Indonesia kecuali judul asli, nama penulis, dan istilah teknis. '.
                'Jangan tambahkan awalan ```json atau akhiran apapun, berikan JSON mentah saja.';

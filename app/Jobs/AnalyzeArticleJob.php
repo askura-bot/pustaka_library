@@ -78,7 +78,10 @@ class AnalyzeArticleJob implements ShouldQueue
             // 4. Extract keywords from results
             $keywords = $this->extractKeywords($resultJson ?? []);
 
-            // 5. Simpan hasil lengkap + kolom utama untuk sitasi + keywords
+            // 5. Extract category from results
+            $category = $this->extractCategory($resultJson ?? []);
+
+            // 6. Simpan hasil lengkap + kolom utama untuk sitasi + keywords + category
             $this->article->update([
                 'status' => 'completed',
                 'analysis_results' => $resultJson,
@@ -86,6 +89,7 @@ class AnalyzeArticleJob implements ShouldQueue
                 'author' => $metadata['author'],
                 'year' => $metadata['year'],
                 'keywords' => $keywords,
+                'category' => $category,
             ]);
 
         } catch (\Exception $e) {
@@ -124,6 +128,30 @@ class AnalyzeArticleJob implements ShouldQueue
             // If it's a comma-separated string
             if (is_string($value) && trim($value) !== '') {
                 return array_map('trim', explode(',', $value));
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extract category from analysis results.
+     *
+     * @param  array<string, mixed>  $results
+     */
+    protected function extractCategory(array $results): ?string
+    {
+        $candidates = ['category', 'Category', 'kategori', 'Kategori'];
+
+        foreach ($candidates as $key) {
+            if (! array_key_exists($key, $results)) {
+                continue;
+            }
+
+            $value = $results[$key];
+
+            if (is_scalar($value) && trim((string) $value) !== '') {
+                return trim((string) $value);
             }
         }
 

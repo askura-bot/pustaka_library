@@ -25,6 +25,8 @@ class LibraryDashboard extends Component
 
     public string $search = '';
 
+    public string $selectedCategory = '';
+
     public bool $showUploadModal = false;
 
     public bool $showDeleteModal = false;
@@ -51,7 +53,27 @@ class LibraryDashboard extends Component
             $query = $this->applySmartSearch($query, trim($this->search));
         }
 
+        if ($this->selectedCategory !== '') {
+            $query->where('category', $this->selectedCategory);
+        }
+
         return $query->get();
+    }
+
+    /**
+     * Get distinct categories from user's articles for the filter dropdown.
+     *
+     * @return array<int, string>
+     */
+    public function getCategoriesProperty(): array
+    {
+        return Auth::user()->articles()
+            ->whereNotNull('category')
+            ->distinct()
+            ->pluck('category')
+            ->sort()
+            ->values()
+            ->toArray();
     }
 
     public function getKtiTypesProperty()
@@ -232,6 +254,7 @@ class LibraryDashboard extends Component
             'articles' => $this->articles,
             'ktiTypes' => $this->ktiTypes,
             'folders' => $this->folders,
+            'categories' => $this->categories,
         ]);
     }
 }

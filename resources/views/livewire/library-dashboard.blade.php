@@ -10,10 +10,11 @@
         </button>
     </div>
 
-    <!-- Smart Search Bar -->
+    <!-- Smart Search Bar + Category Filter -->
     <div class="mb-6">
-        <div class="relative">
-            <div class="flex gap-3 items-center">
+        <div class="flex flex-col sm:flex-row gap-3">
+            {{-- Search --}}
+            <div class="flex gap-3 items-center grow">
                 <div class="relative grow">
                     <input wire:model.live.debounce.300ms="search"
                            type="text"
@@ -24,12 +25,29 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </button>
             </div>
-            @if(trim($search) !== '')
-                <div class="mt-2 text-xs font-bold text-zinc-500">
-                    Menampilkan {{ count($articles) }} hasil untuk "<span class="text-neo-purple">{{ $search }}</span>"
-                </div>
-            @endif
+
+            {{-- Category Filter --}}
+            <select wire:model.live="selectedCategory"
+                    class="neo-input font-bold sm:w-64 shrink-0"
+                    style="border-color: {{ $selectedCategory ? '#FACC15' : '#000' }}; {{ $selectedCategory ? 'background-color: #FEFCE8;' : '' }}">
+                <option value="">📂 Semua Kategori</option>
+                @foreach($categories as $cat)
+                    <option value="{{ $cat }}">{{ $cat }}</option>
+                @endforeach
+            </select>
         </div>
+
+        @if(trim($search) !== '' || $selectedCategory !== '')
+            <div class="mt-2 text-xs font-bold text-zinc-500">
+                Menampilkan {{ count($articles) }} hasil
+                @if(trim($search) !== '')
+                    untuk "<span class="text-neo-purple">{{ $search }}</span>"
+                @endif
+                @if($selectedCategory !== '')
+                    di kategori <span class="text-neo-purple">{{ $selectedCategory }}</span>
+                @endif
+            </div>
+        @endif
     </div>
 
     <!-- Folders Section -->
@@ -89,6 +107,11 @@
                 <div class="neo-border neo-shadow flex flex-col transform transition-transform hover:-translate-y-2 {{ $colorClass }} {{ str_contains($colorClass, 'bg-neo-purple') ? 'text-white' : 'text-black' }}">
                     
                     <a href="{{ route('library.article', $article->id) }}" class="grow p-5 flex flex-col gap-4">
+                        {{-- Category Badge --}}
+                        <span class="inline-block self-start bg-neo-lilac text-black text-[10px] font-bold px-2 py-0.5 border-2 border-black">
+                            {{ $article->category ?? 'Belum Dikategorikan' }}
+                        </span>
+
                         <div class="flex justify-between items-start gap-2">
                             <!-- Icon PDF/DOCX -->
                             <div class="bg-black text-white p-2 border-2 border-black">
