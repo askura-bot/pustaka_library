@@ -1,24 +1,24 @@
 {
-    "mcpServers": {
-        "laravel-boost": {
-            "command": "php",
-            "args": [
-                "artisan",
-                "boost:mcp"
-            ]
-        },
-        "graphify": {
-            "command": "uv",
-            "args": [
-                "run",
-                "--with",
-                "graphifyy",
-                "--with",
-                "mcp",
-                "-m",
-                "graphify.serve",
-                "graphify-out/graph.json"
-            ]
-        }
+  "mcpServers": {
+    "laravel-boost": {
+      "command": "php",
+      "args": [
+        "C:/laragon/www/pustaka_library/artisan",
+        "boost:mcp"
+      ]
+    },
+    "graphify": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "graphifyy",
+        "--with",
+        "mcp",
+        "-m",
+        "graphify.serve",
+        "C:/laragon/www/pustaka_library/graphify-out/graph.json"
+      ]
     }
+  }
 }
