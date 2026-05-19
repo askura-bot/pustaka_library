@@ -89,6 +89,8 @@
     * **Upload Modal:** Dropdown pilih Jenis KTI + Drag & drop file PDF/DOCX (maks 10MB).
     * **Status Indicator:** Badge status per artikel (Proses/Selesai/Gagal) dengan polling otomatis.
     * **Smart Search:** Input field + tombol ikon search (Neubrutalism purple). Pencarian keyword-based. Live debounce 300ms.
+    * **Category Filter:** Dropdown filter kategori (dynamic dari database). Warna aksen kuning saat aktif. Opsi: "Semua Kategori" + daftar kategori unik.
+    * **Category Badge:** Setiap kartu artikel menampilkan badge kategori (`bg-neo-lilac`, border hitam 2px). Fallback: "Belum Dikategorikan".
     * **Keyword Tags:** 3 kata kunci pertama ditampilkan di setiap kartu artikel.
     * **Smart Delete Warning:** Modal konfirmasi hapus menampilkan nama folder terkait: "Artikel ini tertaut di Folder: [A], [B]. Menghapus akan menghapusnya dari semua folder."
     * **Global Ask AI (Sticky FAB):** Tombol floating 🤖 di pojok kanan bawah. Tersembunyi di halaman detail artikel, Ask AI, dan folder.
@@ -108,7 +110,7 @@
         * Dropdown style (APA/MLA/IEEE/Harvard) + tombol "Generate Reference".
         * Mengirim JSON ke Gemini, hasilnya disimpan permanen di database.
         * **Conditional Rendering:** Jika belum ada output → tombol "⚡ Generate". Jika sudah ada → tampilkan hasil + tombol "🔄 Regenerate".
-    * **Per-Article Chat:** Panel chat di bawah citation. AI menjawab berdasarkan `analysis_results` sebagai konteks. Riwayat chat tersimpan permanen.
+    * **Per-Article Chat (Wide Chat Arena):** Panel chat full-width di bawah split screen (`mt-8`). Header `bg-[#8B5CF6]` (Vibrant Purple). Area pesan `max-h-[500px] min-h-[300px]`. Balon chat user (kuning) dan AI (ungu) dengan `max-w-[75%]`. Quick Prompt Suggestions (3 tombol `bg-neo-lilac`) muncul saat chat kosong.
     * **Loading States:** Skeleton loader saat analisis berjalan, spinner animasi saat generate reference/chat.
     * **Case-Insensitive Mapping:** Kunci JSON dari AI di-mapping ke kolom tabel secara case-insensitive. Mendukung format nested (legacy) maupun flat (baru) via `flattenResults()`.
 
@@ -158,6 +160,7 @@
     * `citation_output` (TEXT, nullable — hasil in-text citation dari AI Pass 2)
     * `bibliography_output` (TEXT, nullable — hasil bibliography dari AI Pass 2)
     * `keywords` (JSONB, nullable — array 5 kata kunci dari AI)
+    * `category` (VARCHAR, nullable — klasifikasi bidang ilmu dari AI)
     * `created_at`, `updated_at`
 * **`folders`:**
     * `id`, `user_id` (FK cascade)
@@ -224,8 +227,8 @@
     3. Kirim prompt flat (tanpa kategori) — hanya kunci JSON yang diinginkan.
     4. Parse JSON response.
     5. Simpan ke `analysis_results`. Extract `title`/`author`/`year`/`keywords` ke kolom dedicated.
-* **Prompt Output (Article):** `{'Judul', 'Penulis', 'Jurnal Publikasi', 'Seri Jurnal', 'Link DOI', 'abstract', 'so_what', 'conclusion', 'keywords'}`
-* **Prompt Output (Custom):** `{kolom template..., 'abstract', 'so_what', 'conclusion', 'keywords'}`
+* **Prompt Output (Article):** `{'Judul', 'Penulis', 'Jurnal Publikasi', 'Seri Jurnal', 'Link DOI', 'abstract', 'so_what', 'conclusion', 'keywords', 'category'}`
+* **Prompt Output (Custom):** `{kolom template..., 'abstract', 'so_what', 'conclusion', 'keywords', 'category'}`
 
 ### **Tahap 2: Reference Generation (On-Demand)**
 
@@ -304,7 +307,38 @@ Flux UI components di-override agar sesuai Neubrutalism:
 
 ---
 
-## **13. ENTITY RELATIONSHIP DIAGRAM (ERD)**
+## **13. SMART CATEGORY SYSTEM**
+
+### **Konsep**
+AI secara otomatis mengklasifikasikan setiap artikel ke dalam salah satu dari 9 kategori bidang ilmu standar (Closed-Set Classification).
+
+### **Daftar Kategori (Fixed)**
+1. Sains & Teknologi
+2. Kesehatan & Kedokteran
+3. Ekonomi, Bisnis & Akuntansi
+4. Sosial & Humaniora
+5. Hukum & Politik
+6. Pendidikan & Bahasa
+7. Pertanian, Lingkungan & Logistik
+8. Seni, Desain & Media
+9. Multidisiplin / Umum
+
+### **Mekanisme**
+* **Auto-Classification:** Saat upload, prompt AI menyertakan instruksi untuk memilih 1 kategori dari daftar di atas. Hasilnya disimpan ke kolom `articles.category`.
+* **Batch Sync:** Command `php artisan library:classify-articles` untuk mengisi kategori artikel lama yang belum terklasifikasi.
+* **Dashboard Filter:** Dropdown filter kategori (dynamic options dari `SELECT DISTINCT category`). Warna aksen kuning saat aktif.
+* **Visual Badge:** Setiap kartu artikel menampilkan badge kategori (`bg-neo-lilac`, border hitam 2px). Fallback: "Belum Dikategorikan".
+
+### **Detail Artikel — Layout**
+* **Split Screen:** `grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch lg:h-[780px]`
+* **Sisi Kiri:** PDF viewer `h-full flex flex-col`, iframe `w-full h-full grow`
+* **Sisi Kanan:** `h-full overflow-y-auto pr-2 flex flex-col gap-5` — scrollable sejajar PDF
+* **Wide Chat Arena:** Full-width di bawah grid (`mt-8`), header `bg-[#8B5CF6]`, area pesan `max-h-[500px] min-h-[300px]`
+* **Quick Prompt Suggestions:** 3 tombol `bg-neo-lilac` muncul saat chat kosong
+
+---
+
+## **14. ENTITY RELATIONSHIP DIAGRAM (ERD)**
 
 ### **Diagram Tekstual**
 
@@ -337,6 +371,7 @@ Flux UI components di-override agar sesuai Neubrutalism:
     │    │ citation_output (TEXT)?                       │
     │    │ bibliography_output (TEXT)?                   │
     │    │ keywords (JSONB)?                             │
+    │    │ category (VARCHAR)?                            │
     │    │ created_at, updated_at                        │
     │    └───────────────────────────────────────────────┘
     │                          │
@@ -375,7 +410,7 @@ Flux UI components di-override agar sesuai Neubrutalism:
 |---------|-----------|:------------:|
 | **users** | Data pengguna (autentikasi, profil, OAuth) | 7 |
 | **kti_types** | Template jenis KTI dengan kolom analisis dinamis (JSONB) | 5 |
-| **articles** | Dokumen penelitian yang diunggah + hasil analisis AI | 13 |
+| **articles** | Dokumen penelitian yang diunggah + hasil analisis AI | 14 |
 | **folders** | Pengelompokan logis artikel + cache konteks AI | 6 |
 | **article_folder** | Tabel pivot many-to-many antara articles dan folders | 5 |
 | **chat_histories** | Riwayat percakapan AI (per-artikel, per-folder, atau global) | 8 |
