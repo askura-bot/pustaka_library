@@ -27,44 +27,41 @@
     </h1>
 
     {{-- Split Screen Layout --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch lg:h-[780px]">
 
         {{-- KIRI: Document Viewer --}}
-        <div class="flex flex-col gap-6">
-            <div class="bg-white neo-border shadow-neo min-h-[600px] lg:min-h-[750px] flex flex-col">
-                <div class="bg-black text-white px-4 py-3 font-bold uppercase text-sm flex items-center justify-between">
-                    <span>📄 Dokumen Asli</span>
-                    <span class="text-xs opacity-70 uppercase">{{ $article->file_type }}</span>
-                </div>
-
-                @if($article->file_type === 'pdf')
-                    <iframe
-                        src="{{ route('library.article.file', $article) }}"
-                        class="w-full grow border-0"
-                        style="min-height: 700px;"
-                        title="PDF Viewer - {{ $article->file_name }}">
-                    </iframe>
-                @else
-                    <div class="grow flex flex-col items-center justify-center p-8 text-center bg-zinc-50">
-                        <div class="bg-neo-purple text-white neo-border p-6 mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-3">
-                            <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                        </div>
-                        <p class="font-bold text-lg mb-2">File DOCX tidak bisa ditampilkan langsung</p>
-                        <p class="text-zinc-500 mb-4">Unduh file untuk membacanya di aplikasi Word.</p>
-                        <a href="{{ route('library.article.file', $article) }}"
-                           download="{{ $article->file_name }}"
-                           class="neo-btn neo-btn-purple shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                            Unduh File
-                        </a>
-                    </div>
-                @endif
+        <div class="bg-white neo-border shadow-neo h-full flex flex-col">
+            <div class="bg-black text-white px-4 py-3 font-bold uppercase text-sm flex items-center justify-between shrink-0">
+                <span>📄 Dokumen Asli</span>
+                <span class="text-xs opacity-70 uppercase">{{ $article->file_type }}</span>
             </div>
+
+            @if($article->file_type === 'pdf')
+                <iframe
+                    src="{{ route('library.article.file', $article) }}"
+                    class="w-full h-full grow border-0"
+                    title="PDF Viewer - {{ $article->file_name }}">
+                </iframe>
+            @else
+                <div class="grow flex flex-col items-center justify-center p-8 text-center bg-zinc-50">
+                    <div class="bg-neo-purple text-white neo-border p-6 mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-3">
+                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <p class="font-bold text-lg mb-2">File DOCX tidak bisa ditampilkan langsung</p>
+                    <p class="text-zinc-500 mb-4">Unduh file untuk membacanya di aplikasi Word.</p>
+                    <a href="{{ route('library.article.file', $article) }}"
+                       download="{{ $article->file_name }}"
+                       class="neo-btn neo-btn-purple shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        Unduh File
+                    </a>
+                </div>
+            @endif
         </div>
 
-        {{-- KANAN: Analysis Hub --}}
-        <div class="flex flex-col gap-5 overflow-y-auto max-h-[900px] lg:max-h-none"
+        {{-- KANAN: Analysis Hub (scrollable, same height as PDF) --}}
+        <div class="h-full overflow-y-auto pr-2 flex flex-col gap-5"
              @if(in_array($article->status, ['pending', 'processing'])) wire:poll.3s @endif>
 
             @if(in_array($article->status, ['pending', 'processing']))
@@ -308,52 +305,54 @@
                     <p class="text-xl font-bold text-zinc-500">Belum ada hasil analisis.</p>
                 </div>
             @endif
+        </div>
+    </div>
 
-            {{-- CHAT PANEL (always visible when analysis is completed) --}}
-            @if($article->status === 'completed' && $article->analysis_results)
-                <div class="bg-white neo-border shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col"
-                     x-data="{ }"
-                     x-init="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })"
-                     @chat-updated.window="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })">
+    {{-- CHAT PANEL (full width, below split screen) --}}
+    @if($article->status === 'completed' && $article->analysis_results)
+        <div class="mt-8 w-full bg-white border-4 border-black shadow-neo flex flex-col"
+             x-data="{ }"
+             x-init="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })"
+             @chat-updated.window="$nextTick(() => { if ($refs.chatScroll) $refs.chatScroll.scrollTop = $refs.chatScroll.scrollHeight })">
 
                     {{-- Chat Header --}}
-                    <div class="bg-black text-white border-b-4 border-black px-5 py-3 flex items-center justify-between">
-                        <h3 class="text-lg font-black uppercase flex items-center gap-2">
-                            <span class="text-xl">💬</span> Tanya AI tentang Artikel Ini
+                    <div class="bg-[#8B5CF6] text-white border-b-4 border-black px-6 py-4 flex items-center justify-between shrink-0">
+                        <h3 class="text-xl font-black uppercase flex items-center gap-3">
+                            <span class="text-2xl">💬</span> Tanya AI tentang Artikel Ini
                         </h3>
-                        <span class="text-xs opacity-70 font-bold">{{ count($chatHistory) }} pesan</span>
+                        <span class="text-sm opacity-80 font-bold bg-white/20 px-3 py-1 border-2 border-white/40">{{ count($chatHistory) }} pesan</span>
                     </div>
 
                     {{-- Chat Messages --}}
-                    <div class="flex flex-col gap-3 p-4 overflow-y-auto max-h-[400px] min-h-[200px]" x-ref="chatScroll">
+                    <div class="flex flex-col gap-4 p-6 overflow-y-auto max-h-[500px] min-h-[300px]" x-ref="chatScroll">
                         @if(count($chatHistory) === 0)
-                            <div class="flex flex-col items-center justify-center text-center py-8 text-zinc-400">
-                                <div class="bg-neo-yellow text-black neo-border p-4 mb-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2">
-                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex flex-col items-center justify-center text-center py-12 text-zinc-400">
+                                <div class="bg-neo-yellow text-black neo-border p-5 mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-2">
+                                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                     </svg>
                                 </div>
-                                <p class="font-bold text-sm">Belum ada percakapan</p>
-                                <p class="text-xs mt-1">Tanya apa saja tentang isi dokumen ini!</p>
+                                <p class="font-bold text-base">Belum ada percakapan</p>
+                                <p class="text-sm mt-1">Tanya apa saja tentang isi dokumen ini!</p>
                             </div>
                         @else
                             @foreach($chatHistory as $chat)
                                 {{-- User Message --}}
                                 <div class="flex justify-end" wire:key="chat-{{ $chat->id }}-user">
-                                    <div class="bg-neo-yellow text-black neo-border p-3 max-w-[85%] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                                        <p class="text-sm font-medium leading-relaxed">{{ $chat->message }}</p>
-                                        <span class="text-xs opacity-60 font-bold mt-1 block text-right">{{ $chat->created_at->format('H:i') }}</span>
+                                    <div class="bg-neo-yellow text-black border-4 border-black p-4 max-w-[75%] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                        <p class="font-medium leading-relaxed">{{ $chat->message }}</p>
+                                        <span class="text-xs opacity-60 font-bold mt-2 block text-right">{{ $chat->created_at->format('H:i') }}</span>
                                     </div>
                                 </div>
 
                                 {{-- AI Response --}}
                                 <div class="flex justify-start" wire:key="chat-{{ $chat->id }}-ai">
-                                    <div class="bg-neo-purple text-white neo-border p-3 max-w-[85%] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                                        <div class="flex items-center gap-1 mb-1">
-                                            <span class="text-xs font-black uppercase opacity-80">🤖 AI</span>
+                                    <div class="bg-[#8B5CF6] text-white border-4 border-black p-4 max-w-[75%] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <span class="text-xs font-black uppercase bg-white/20 px-2 py-0.5 border border-white/40">🤖 AI</span>
                                         </div>
-                                        <p class="text-sm font-medium leading-relaxed whitespace-pre-wrap">{{ $chat->response }}</p>
-                                        <span class="text-xs opacity-60 font-bold mt-1 block">{{ $chat->created_at->format('H:i') }}</span>
+                                        <p class="font-medium leading-relaxed whitespace-pre-wrap">{{ $chat->response }}</p>
+                                        <span class="text-xs opacity-60 font-bold mt-2 block">{{ $chat->created_at->format('H:i') }}</span>
                                     </div>
                                 </div>
                             @endforeach
@@ -361,13 +360,13 @@
 
                         {{-- Typing indicator --}}
                         <div wire:loading wire:target="sendMessage" class="flex justify-start">
-                            <div class="bg-neo-purple/80 text-white neo-border p-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-black uppercase">🤖 AI sedang mengetik</span>
+                            <div class="bg-[#8B5CF6]/80 text-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-sm font-black uppercase">🤖 AI sedang mengetik</span>
                                     <span class="flex gap-1">
-                                        <span class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></span>
-                                        <span class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></span>
-                                        <span class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                                        <span class="w-2.5 h-2.5 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                                        <span class="w-2.5 h-2.5 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                                        <span class="w-2.5 h-2.5 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></span>
                                     </span>
                                 </div>
                             </div>
@@ -376,37 +375,53 @@
 
                     {{-- Chat Error --}}
                     @if($chatError)
-                        <div class="mx-4 mb-2 bg-red-100 neo-border p-2 text-red-700 font-bold text-xs">
+                        <div class="mx-6 mb-3 bg-red-100 border-4 border-black p-3 text-red-700 font-bold text-sm">
                             {{ $chatError }}
                         </div>
                     @endif
 
                     {{-- Chat Input --}}
-                    <div class="border-t-4 border-black p-4">
-                        <form wire:submit="sendMessage" class="flex gap-2">
+                    <div class="border-t-4 border-black p-5 shrink-0">
+                        {{-- Quick Prompt Suggestions (only when chat is empty) --}}
+                        @if(count($chatHistory) === 0)
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <button type="button" wire:click="$set('chatMessage', 'Rangkum metodologi penelitian ini')"
+                                        class="bg-[#EDE9FE] text-black border-2 border-black px-3 py-1.5 text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer">
+                                    💡 Rangkum metodologi penelitian ini
+                                </button>
+                                <button type="button" wire:click="$set('chatMessage', 'Apa kontribusi utama dari artikel ini?')"
+                                        class="bg-[#EDE9FE] text-black border-2 border-black px-3 py-1.5 text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer">
+                                    🔑 Apa kontribusi utama dari artikel ini?
+                                </button>
+                                <button type="button" wire:click="$set('chatMessage', 'Jelaskan kelemahan yang ditemukan penulis')"
+                                        class="bg-[#EDE9FE] text-black border-2 border-black px-3 py-1.5 text-xs font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all cursor-pointer">
+                                    ❓ Jelaskan kelemahan yang ditemukan penulis
+                                </button>
+                            </div>
+                        @endif
+
+                        <form wire:submit="sendMessage" class="flex gap-3">
                             <input wire:model="chatMessage"
                                    type="text"
                                    placeholder="Tanya sesuatu tentang artikel ini..."
-                                   class="neo-input grow text-sm bg-zinc-50"
+                                   class="neo-input grow bg-zinc-50"
                                    wire:loading.attr="disabled"
                                    wire:target="sendMessage"
                                    autocomplete="off" />
                             <button type="submit"
                                     wire:loading.attr="disabled"
                                     wire:target="sendMessage"
-                                    class="neo-btn neo-btn-yellow shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 shrink-0">
+                                    class="neo-btn neo-btn-yellow shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-6 shrink-0">
                                 <span wire:loading.remove wire:target="sendMessage">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                                 </span>
                                 <span wire:loading wire:target="sendMessage">
-                                    <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    <svg class="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                                 </span>
                             </button>
                         </form>
-                        @error('chatMessage') <span class="text-red-500 font-bold text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @error('chatMessage') <span class="text-red-500 font-bold text-xs mt-2 block">{{ $message }}</span> @enderror
                     </div>
-                </div>
-            @endif
         </div>
-    </div>
+    @endif
 </div>
