@@ -12,29 +12,27 @@
 
     <!-- Smart Search Bar + Category Filter -->
     <div class="mb-6">
-        <div class="flex flex-col sm:flex-row gap-3">
-            {{-- Search --}}
-            <div class="flex gap-3 items-center grow">
-                <div class="relative grow">
-                    <input wire:model.live.debounce.300ms="search"
-                           type="text"
-                           placeholder="Cari judul, penulis, kata kunci, atau isi analisis..."
-                           class="neo-input font-medium" />
-                </div>
-                <button type="button" class="neo-btn neo-btn-purple shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-3 shrink-0" title="Smart Search">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </button>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3 items-center">
+            {{-- Search Input --}}
+            <input wire:model.live.debounce.300ms="search"
+                   type="text"
+                   placeholder="Cari judul, penulis, kata kunci, atau isi analisis..."
+                   class="neo-input font-medium w-full" />
 
             {{-- Category Filter --}}
             <select wire:model.live="selectedCategory"
-                    class="neo-input font-bold sm:w-64 shrink-0"
+                    class="neo-input font-bold w-full md:w-56"
                     style="border-color: {{ $selectedCategory ? '#FACC15' : '#000' }}; {{ $selectedCategory ? 'background-color: #FEFCE8;' : '' }}">
                 <option value="">📂 Semua Kategori</option>
                 @foreach($categories as $cat)
                     <option value="{{ $cat }}">{{ $cat }}</option>
                 @endforeach
             </select>
+
+            {{-- Search Button --}}
+            <button type="button" class="neo-btn neo-btn-purple shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] px-4 py-3" title="Smart Search">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </button>
         </div>
 
         @if(trim($search) !== '' || $selectedCategory !== '')
